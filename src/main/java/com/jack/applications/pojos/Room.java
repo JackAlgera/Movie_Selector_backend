@@ -1,5 +1,6 @@
 package com.jack.applications.pojos;
 
+import com.jack.applications.mqtt.MQTTClient;
 import com.jack.applications.utils.IdGenerator;
 
 import java.util.HashMap;
@@ -10,11 +11,13 @@ public class Room {
     private static IdGenerator idGenerator = IdGenerator.getIdGenerator();
 
     private String roomId;
+    private MQTTClient mqttClient;
     private Map<String, User> connectedUsers;
 
     public Room() {
         this.roomId = idGenerator.getRandomId();
         this.connectedUsers = new HashMap<>();
+        this.mqttClient = new MQTTClient(roomId);
     }
 
     public User getUser(String userId) {
