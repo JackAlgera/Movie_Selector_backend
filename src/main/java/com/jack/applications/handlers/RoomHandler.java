@@ -23,6 +23,10 @@ public class RoomHandler {
         return instance;
     }
 
+    public Room getRoom(String roomId) {
+        return this.availableRooms.get(roomId);
+    }
+
     public Room createNewRoom() {
         Room newRoom = new Room();
         this.availableRooms.put(newRoom.getRoomId(), newRoom);

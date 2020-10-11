@@ -17,6 +17,10 @@ public class Room {
         this.connectedUsers = new HashMap<>();
     }
 
+    public User getUser(String userId) {
+        return this.connectedUsers.get(userId);
+    }
+
     public void addUser(User newUser) {
         this.connectedUsers.put(newUser.getUserId(), newUser);
     }
