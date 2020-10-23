@@ -1,4 +1,4 @@
-package com.jack.applications.pojos;
+package com.jack.applications.models;
 
 import com.jack.applications.utils.IdGenerator;
 

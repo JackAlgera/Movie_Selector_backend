@@ -1,6 +1,6 @@
 package com.jack.applications.handlers;
 
-import com.jack.applications.pojos.Room;
+import com.jack.applications.models.Room;
 
 import java.util.HashMap;
 import java.util.Map;

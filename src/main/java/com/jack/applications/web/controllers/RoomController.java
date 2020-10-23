@@ -1,13 +1,11 @@
 package com.jack.applications.web.controllers;
 
 import com.jack.applications.handlers.RoomHandler;
-import com.jack.applications.pojos.Room;
-import com.jack.applications.pojos.User;
+import com.jack.applications.models.Room;
+import com.jack.applications.models.User;
 import com.jack.applications.web.statuscodes.NotFoundException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
