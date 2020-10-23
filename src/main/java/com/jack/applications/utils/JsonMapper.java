@@ -3,6 +3,9 @@ package com.jack.applications.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 public class JsonMapper {
 
     private static JsonMapper instance;
@@ -21,6 +24,10 @@ public class JsonMapper {
     }
 
     public <T> T readValue(String jsonString, Class<T> valueType) throws JsonProcessingException {
+        return this.objectMapper.readValue(jsonString, valueType);
+    }
+
+    public <T> T readValue(InputStream jsonString, Class<T> valueType) throws IOException {
         return this.objectMapper.readValue(jsonString, valueType);
     }
 }

@@ -1,4 +1,4 @@
-package com.jack.applications.models;
+package com.jack.applications.web.models;
 
 import com.jack.applications.utils.IdGenerator;
 

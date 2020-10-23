@@ -1,7 +1,6 @@
 package com.jack.applications;
 
-import com.jack.applications.web.database.DatabaseHandler;
-import org.springframework.boot.SpringApplication;
+import com.jack.applications.database.DatabaseHandler;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
