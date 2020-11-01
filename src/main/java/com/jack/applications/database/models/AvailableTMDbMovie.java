@@ -2,8 +2,10 @@ package com.jack.applications.database.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class AvailableTMDbMovie extends BaseModel {
+public class AvailableTMDbMovie {
 
+    @JsonProperty("id")
+    private int movieId;
     @JsonProperty("adult")
     private boolean isAdult;
     @JsonProperty("original_title")
@@ -14,16 +16,22 @@ public class AvailableTMDbMovie extends BaseModel {
     private boolean isVideo;
 
     public AvailableTMDbMovie() {
-        super();
     }
 
-    public AvailableTMDbMovie(boolean isAdult, int id, String originalTitle, float popularity, boolean isVideo) {
-        super(id);
+    public AvailableTMDbMovie(boolean isAdult, int movieId, String originalTitle, float popularity, boolean isVideo) {
         this.isAdult = isAdult;
-        this.id = id;
+        this.movieId = movieId;
         this.originalTitle = originalTitle;
         this.popularity = popularity;
         this.isVideo = isVideo;
+    }
+
+    public int getMovieId() {
+        return movieId;
+    }
+
+    public void setMovieId(int movieId) {
+        this.movieId = movieId;
     }
 
     public boolean isAdult() {
@@ -62,7 +70,7 @@ public class AvailableTMDbMovie extends BaseModel {
     public String toString() {
         return "AvailableTMDbMovie{" +
                 "isAdult=" + isAdult +
-                ", id=" + id +
+                ", movieId=" + movieId +
                 ", originalTitle='" + originalTitle + '\'' +
                 ", popularity=" + popularity +
                 ", isVideo=" + isVideo +

@@ -2,8 +2,15 @@ package com.jack.applications.database.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "country")
 public class Country {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     @JsonProperty("iso_3166_1")
     private String countryCode;
     @JsonProperty("name")
@@ -15,6 +22,14 @@ public class Country {
     public Country(String countryCode, String name) {
         this.countryCode = countryCode;
         this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getCountryCode() {

@@ -1,9 +1,11 @@
 package com.jack.applications.web.controllers;
 
+import com.jack.applications.database.DatabaseHandler;
 import com.jack.applications.web.handlers.RoomHandler;
 import com.jack.applications.web.models.Room;
 import com.jack.applications.web.models.User;
 import com.jack.applications.web.statuscodes.NotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,14 @@ import java.util.List;
 public class RoomController {
 
     private static RoomHandler roomHandler = RoomHandler.getInstance();
+
+    @Autowired
+    private DatabaseHandler databaseHandler;
+
+    @GetMapping(path = "/start")
+    public void start() {
+        databaseHandler.updateAllMovies();
+    }
 
     /**
      * Returns all available rooms.

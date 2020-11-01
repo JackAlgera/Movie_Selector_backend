@@ -2,8 +2,15 @@ package com.jack.applications.database.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "language")
 public class Language {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     @JsonProperty("iso_639_1")
     private String languageCode;
     @JsonProperty("name")

@@ -2,8 +2,15 @@ package com.jack.applications.database.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Company extends BaseModel {
+import javax.persistence.*;
 
+@Entity
+@Table(name = "company")
+public class Company {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
     @JsonProperty("logo_path")
     private String logoPath;
     @JsonProperty("name")
@@ -12,15 +19,21 @@ public class Company extends BaseModel {
     private String originCountry;
 
     public Company() {
-        super();
     }
 
     public Company(int id, String logoPath, String name, String originCountry) {
-        super(id);
         this.id = id;
         this.logoPath = logoPath;
         this.name = name;
         this.originCountry = originCountry;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getLogoPath() {

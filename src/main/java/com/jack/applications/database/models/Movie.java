@@ -3,50 +3,52 @@ package com.jack.applications.database.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Entity
+@Table(name = "movie")
 public class Movie {
 
+    @Id
     @JsonProperty("id")
-    private int id;
+    private int movieId;
     @JsonProperty("imdb_id")
-    private String imdb_id;
+    private String imdbId;
     @JsonProperty("adult")
     private boolean isAdult;
-    @JsonProperty("budget")
     private float budget;
-    @JsonProperty("genres")
-    private ArrayList<Genre> genres;
+//    @ManyToMany(cascade = CascadeType.ALL)
+//    @JoinTable(
+//            name = "movie_genre",
+//            joinColumns = @JoinColumn(name = "movieId"),
+//            inverseJoinColumns = @JoinColumn(name = "genreId")
+//    )
+//    private List<Genre> genres;
     @JsonProperty("backdrop_path")
     private String backdropPath;
-    @JsonProperty("homepage")
     private String homepage;
     @JsonProperty("original_language")
     private String originalLanguage;
     @JsonProperty("original_title")
     private String originalTitle;
-    @JsonProperty("overview")
     private String overview;
-    @JsonProperty("popularity")
-    private int popularity;
+    private float popularity;
     @JsonProperty("poster_path")
     private String posterPath;
-    @JsonProperty("production_companies")
-    private ArrayList<Company> productionCompanies;
-    @JsonProperty("production_countries")
-    private ArrayList<Country> productionCountries;
+    //@JsonProperty("production_companies")
+    //private List<Company> productionCompanies;
+    //@JsonProperty("production_countries")
+    //private List<Country> productionCountries;
     @JsonProperty("release_date")
     private String releaseDate;
-    @JsonProperty("revenue")
     private float revenue;
-    @JsonProperty("runtime")
     private int runtime;
-    @JsonProperty("spoken_languages")
-    private ArrayList<Language> spokenLanguages;
-    @JsonProperty("tagline")
+    //@JsonProperty("spoken_languages")
+    //private List<Language> spokenLanguages;
     private String tagline;
-    @JsonProperty("title")
     private String title;
     @JsonProperty("vote_average")
     private float averageVote;
@@ -56,20 +58,20 @@ public class Movie {
     public Movie() {
     }
 
-    public int getId() {
-        return id;
+    public int getMovieId() {
+        return movieId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setMovieId(int movieId) {
+        this.movieId = movieId;
     }
 
-    public String getImdb_id() {
-        return imdb_id;
+    public String getImdbId() {
+        return imdbId;
     }
 
-    public void setImdb_id(String imdb_id) {
-        this.imdb_id = imdb_id;
+    public void setImdbId(String imdbId) {
+        this.imdbId = imdbId;
     }
 
     public String getBackdropPath() {
@@ -112,11 +114,11 @@ public class Movie {
         this.overview = overview;
     }
 
-    public int getPopularity() {
+    public float getPopularity() {
         return popularity;
     }
 
-    public void setPopularity(int popularity) {
+    public void setPopularity(float popularity) {
         this.popularity = popularity;
     }
 
@@ -128,21 +130,21 @@ public class Movie {
         this.posterPath = posterPath;
     }
 
-    public ArrayList<Company> getProductionCompanies() {
-        return productionCompanies;
-    }
-
-    public void setProductionCompanies(ArrayList<Company> productionCompanies) {
-        this.productionCompanies = productionCompanies;
-    }
-
-    public ArrayList<Country> getProductionCountries() {
-        return productionCountries;
-    }
-
-    public void setProductionCountries(ArrayList<Country> productionCountries) {
-        this.productionCountries = productionCountries;
-    }
+//    public List<Company> getProductionCompanies() {
+//        return productionCompanies;
+//    }
+//
+//    public void setProductionCompanies(ArrayList<Company> productionCompanies) {
+//        this.productionCompanies = productionCompanies;
+//    }
+//
+//    public List<Country> getProductionCountries() {
+//        return productionCountries;
+//    }
+//
+//    public void setProductionCountries(ArrayList<Country> productionCountries) {
+//        this.productionCountries = productionCountries;
+//    }
 
     public String getReleaseDate() {
         return releaseDate;
@@ -168,13 +170,13 @@ public class Movie {
         this.runtime = runtime;
     }
 
-    public ArrayList<Language> getSpokenLanguages() {
-        return spokenLanguages;
-    }
-
-    public void setSpokenLanguages(ArrayList<Language> spokenLanguages) {
-        this.spokenLanguages = spokenLanguages;
-    }
+//    public List<Language> getSpokenLanguages() {
+//        return spokenLanguages;
+//    }
+//
+//    public void setSpokenLanguages(ArrayList<Language> spokenLanguages) {
+//        this.spokenLanguages = spokenLanguages;
+//    }
 
     public String getTagline() {
         return tagline;
@@ -224,22 +226,22 @@ public class Movie {
         this.budget = budget;
     }
 
-    public ArrayList<Genre> getGenres() {
-        return genres;
-    }
+//    public List<Genre> getGenres() {
+//        return genres;
+//    }
 
-    public void setGenres(ArrayList<Genre> genres) {
-        this.genres = genres;
-    }
+//    public void setGenres(ArrayList<Genre> genres) {
+//        this.genres = genres;
+//    }
 
     @Override
     public String toString() {
         return "Movie{" +
-                "id=" + id +
-                ", imdb_id=" + imdb_id +
+                "movieId=" + movieId +
+                ", imdbId=" + imdbId +
                 ", isAdult=" + isAdult +
                 ", budget=" + budget +
-                ", genres=" + genres +
+//                ", genres=" + genres +
                 ", backdropPath='" + backdropPath + '\'' +
                 ", homepage='" + homepage + '\'' +
                 ", originalLanguage='" + originalLanguage + '\'' +
@@ -247,12 +249,12 @@ public class Movie {
                 ", overview='" + overview + '\'' +
                 ", popularity=" + popularity +
                 ", posterPath='" + posterPath + '\'' +
-                ", productionCompanies=" + productionCompanies +
-                ", productionCountries=" + productionCountries +
-                ", releaseDate=" + releaseDate +
-                ", revenue=" + revenue +
-                ", runtime=" + runtime +
-                ", spokenLanguages=" + spokenLanguages +
+//                ", productionCompanies=" + productionCompanies +
+//                ", productionCountries=" + productionCountries +
+//                ", releaseDate=" + releaseDate +
+//                ", revenue=" + revenue +
+//                ", runtime=" + runtime +
+//                ", spokenLanguages=" + spokenLanguages +
                 ", tagline='" + tagline + '\'' +
                 ", title='" + title + '\'' +
                 ", averageVote=" + averageVote +
