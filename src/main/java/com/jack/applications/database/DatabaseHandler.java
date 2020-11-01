@@ -19,6 +19,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
@@ -117,6 +118,14 @@ public class DatabaseHandler {
         System.out.println("HERE :" + movie.toString());
 
         movieRepository.save(movie);
+    }
+
+    /**
+     * Return all movies from DB
+     * @return
+     */
+    public List<Movie> getAllMovies() {
+        return movieRepository.findAll();
     }
 
 }
