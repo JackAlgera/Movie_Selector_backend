@@ -1,4 +1,4 @@
-package com.jack.applications.web.models;
+package com.jack.applications.webservice.models;
 
 import com.jack.applications.mqtt.MQTTClient;
 import com.jack.applications.utils.IdGenerator;

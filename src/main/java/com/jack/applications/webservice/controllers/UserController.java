@@ -1,4 +1,4 @@
-package com.jack.applications.web.controllers;
+package com.jack.applications.webservice.controllers;
 
 import org.springframework.web.bind.annotation.RestController;
 

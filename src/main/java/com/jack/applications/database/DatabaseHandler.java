@@ -74,13 +74,12 @@ public class DatabaseHandler {
 
             in.close();
             connection.disconnect();
-            System.out.println(movies.size());
 
-            AvailableTMDbMovie currentMovie = movies.get(10);
-            Movie movie = tmdbDAOimpl.getMovieInfo(currentMovie.getMovieId());
-            System.out.println(movie.toString());
-
-            checkMovieDetails(movie, languages, countries);
+            for (int i = 0; i < 20; i++) {
+                AvailableTMDbMovie currentMovie = movies.get(i);
+                Movie movie = tmdbDAOimpl.getMovieInfo(currentMovie.getMovieId());
+                checkMovieDetails(movie, languages, countries);
+            }
 
             //movies.stream().forEach(w -> System.out.println(w.toString()) );
 

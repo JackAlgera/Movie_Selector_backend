@@ -1,6 +1,6 @@
-package com.jack.applications.web.handlers;
+package com.jack.applications.webservice.handlers;
 
-import com.jack.applications.web.models.Room;
+import com.jack.applications.webservice.models.Room;
 
 import java.util.HashMap;
 import java.util.Map;

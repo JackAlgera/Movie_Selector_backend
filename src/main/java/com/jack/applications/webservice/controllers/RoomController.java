@@ -1,10 +1,10 @@
-package com.jack.applications.web.controllers;
+package com.jack.applications.webservice.controllers;
 
 import com.jack.applications.database.DatabaseHandler;
-import com.jack.applications.web.handlers.RoomHandler;
-import com.jack.applications.web.models.Room;
-import com.jack.applications.web.models.User;
-import com.jack.applications.web.statuscodes.NotFoundException;
+import com.jack.applications.webservice.handlers.RoomHandler;
+import com.jack.applications.webservice.models.Room;
+import com.jack.applications.webservice.models.User;
+import com.jack.applications.webservice.statuscodes.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
