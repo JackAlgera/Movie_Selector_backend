@@ -91,6 +91,7 @@ public class DatabaseHandler {
     }
 
     private void checkMovieDetails(Movie movie, Map<String, Language> languages, Map<String, Country> countries) {
+        System.out.println("HERE :" + movie.toString());
         if (movieRepository.existsById(movie.getMovieId())) {
             return;
         }
@@ -125,6 +126,10 @@ public class DatabaseHandler {
      */
     public List<Movie> getAllMovies() {
         return movieRepository.findAll();
+    }
+
+    public Movie getMovie(int movieId) {
+        return movieRepository.findById(movieId).get();
     }
 
 }

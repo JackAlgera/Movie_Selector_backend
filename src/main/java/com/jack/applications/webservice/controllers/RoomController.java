@@ -15,9 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 public class RoomController {
 
-    private static RoomHandler roomHandler = RoomHandler.getInstance();
+    @Autowired
+    private RoomHandler roomHandler;
 
     @Autowired
     private DatabaseHandler databaseHandler;
@@ -73,6 +75,7 @@ public class RoomController {
     public ResponseEntity<User> addUserToRoom(
             @PathVariable(name = "roomId") String roomId,
             @RequestParam(required = true, name = "userName") String userName) {
+
         Room room = roomHandler.getRoom(roomId);
         if(room == null) {
             throw new NotFoundException(String.format("Room with Id %s not found", roomId));
