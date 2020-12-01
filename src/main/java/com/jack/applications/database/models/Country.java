@@ -1,15 +1,11 @@
 package com.jack.applications.database.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "country")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Country {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @JsonProperty("iso_3166_1")
     private String countryCode;

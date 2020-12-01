@@ -1,15 +1,11 @@
 package com.jack.applications.database.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "language")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Language {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @JsonProperty("iso_639_1")
     private String languageCode;

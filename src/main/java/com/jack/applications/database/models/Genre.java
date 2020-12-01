@@ -1,13 +1,10 @@
 package com.jack.applications.database.models;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Entity
-@Table(name = "genre")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Genre {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private int genreId;
     private String name;
 

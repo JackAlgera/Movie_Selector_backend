@@ -2,7 +2,6 @@ package com.jack.applications.webservice.models;
 
 import com.jack.applications.database.models.Movie;
 import com.jack.applications.utils.IdGenerator;
-import org.hibernate.sql.Select;
 
 import java.util.ArrayList;
 import java.util.HashMap;

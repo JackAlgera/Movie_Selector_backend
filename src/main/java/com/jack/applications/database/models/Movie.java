@@ -3,16 +3,11 @@ package com.jack.applications.database.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Entity
-@Table(name = "movie")
 public class Movie {
 
-    @Id
     @JsonProperty("id")
     private int movieId;
     @JsonProperty("imdb_id")
@@ -20,13 +15,7 @@ public class Movie {
     @JsonProperty("adult")
     private boolean isAdult;
     private float budget;
-//    @ManyToMany(cascade = CascadeType.ALL)
-//    @JoinTable(
-//            name = "movie_genre",
-//            joinColumns = @JoinColumn(name = "movieId"),
-//            inverseJoinColumns = @JoinColumn(name = "genreId")
-//    )
-//    private List<Genre> genres;
+    private List<Genre> genres;
     @JsonProperty("backdrop_path")
     private String backdropPath;
     private String homepage;
@@ -38,16 +27,16 @@ public class Movie {
     private float popularity;
     @JsonProperty("poster_path")
     private String posterPath;
-    //@JsonProperty("production_companies")
-    //private List<Company> productionCompanies;
-    //@JsonProperty("production_countries")
-    //private List<Country> productionCountries;
+    @JsonProperty("production_companies")
+    private List<Company> productionCompanies;
+    @JsonProperty("production_countries")
+    private List<Country> productionCountries;
     @JsonProperty("release_date")
     private String releaseDate;
     private float revenue;
     private int runtime;
-    //@JsonProperty("spoken_languages")
-    //private List<Language> spokenLanguages;
+    @JsonProperty("spoken_languages")
+    private List<Language> spokenLanguages;
     private String tagline;
     private String title;
     @JsonProperty("vote_average")

@@ -3,13 +3,13 @@ package com.jack.applications.websockets.models;
 public class SelectionMessageDto {
 
     private String userId;
-    private Integer movieId;
+    private String movieId;
     private String roomId;
 
     public SelectionMessageDto() {
     }
 
-    public SelectionMessageDto(String userId, Integer movieId, String roomId) {
+    public SelectionMessageDto(String userId, String movieId, String roomId) {
         this.userId = userId;
         this.movieId = movieId;
         this.roomId = roomId;
@@ -23,11 +23,11 @@ public class SelectionMessageDto {
         this.userId = userId;
     }
 
-    public Integer getMovieId() {
+    public String getMovieId() {
         return movieId;
     }
 
-    public void setMovieId(Integer movieId) {
+    public void setMovieId(String movieId) {
         this.movieId = movieId;
     }
 

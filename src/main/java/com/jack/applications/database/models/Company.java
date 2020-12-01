@@ -1,15 +1,11 @@
 package com.jack.applications.database.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "company")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Company {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     @JsonProperty("logo_path")
     private String logoPath;
