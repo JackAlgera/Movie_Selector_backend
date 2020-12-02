@@ -1,8 +1,10 @@
 package com.jack.applications.webservice.controllers;
 
 import com.jack.applications.database.DatabaseHandler;
+import com.jack.applications.database.models.Movie;
 import com.jack.applications.webservice.handlers.RoomHandler;
 import com.jack.applications.webservice.models.Room;
+import com.jack.applications.webservice.models.Selection;
 import com.jack.applications.webservice.models.User;
 import com.jack.applications.webservice.statuscodes.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,6 +109,22 @@ public class RoomController {
 
         room.removeUser(userId);
         return ResponseEntity.ok(user);
+    }
+
+    @GetMapping(path = "/rooms/{roomId}/foundMovie")
+    public ResponseEntity<Movie> getFoundMovie(@PathVariable(name = "roomId") String roomId) {
+        Room room = roomHandler.getRoom(roomId);
+        if(room == null) {
+            throw new NotFoundException(String.format("Room with Id %s not found", roomId));
+        }
+
+        Movie selectedMovie = null;
+        Selection selection = room.getMovieFound();
+        if (selection != null) {
+            selectedMovie = selection.getSelectedMovie();
+        }
+
+        return ResponseEntity.ok(selectedMovie);
     }
 
 }

@@ -14,11 +14,13 @@ public class Room {
     private String roomId;
     private ArrayList<User> connectedUsers;
     private final Map<String, Selection> selectedMovies;
+    private Selection movieFound;
 
     public Room() {
         this.selectedMovies = new HashMap<>();
         this.roomId = idGenerator.getRandomId();
         this.connectedUsers = new ArrayList<>();
+        this.movieFound = null;
     }
 
     public User getUser(String userId) {
@@ -30,7 +32,7 @@ public class Room {
         return null;
     }
 
-    public String getFoundMovie() {
+    public String getFoundMovieId() {
         for (Selection selection : selectedMovies.values()) {
             if (selection.getTotalLikes() > 1 && selection.getTotalLikes() == connectedUsers.size()) {
                 return selection.getSelectedMovieId();
@@ -41,6 +43,10 @@ public class Room {
     }
 
     public boolean likeMovie(Movie selectedMovie, String userId, int numberOfUsersConnected) {
+        if (movieFound != null) {
+            return false;
+        }
+
         User currentUser = null;
         for (User user : connectedUsers) {
             if (user.getUserId().equals(userId)) {
@@ -68,7 +74,12 @@ public class Room {
             System.out.println(String.format("Movie with id:%s already exists, number of users that like this movie:%s",
                     selectedMovie.getImdbId(),
                     selectedMovies.get(selectedMovie.getImdbId()).getTotalLikes()));
-            return existingSelection.getTotalLikes() > 1 && existingSelection.getTotalLikes() >= numberOfUsersConnected;
+            if (existingSelection.getTotalLikes() > 1 && existingSelection.getTotalLikes() >= numberOfUsersConnected) {
+                movieFound = existingSelection;
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
@@ -98,6 +109,10 @@ public class Room {
 
     public Map<String, Selection> getSelectedMovies() {
         return selectedMovies;
+    }
+
+    public Selection getMovieFound() {
+        return movieFound;
     }
 
     @Override

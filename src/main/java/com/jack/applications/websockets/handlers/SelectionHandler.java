@@ -6,8 +6,6 @@ import com.jack.applications.database.models.Movie;
 import com.jack.applications.utils.JsonMapper;
 import com.jack.applications.webservice.handlers.RoomHandler;
 import com.jack.applications.webservice.models.Room;
-import com.jack.applications.webservice.models.Selection;
-import com.jack.applications.webservice.models.User;
 import com.jack.applications.websockets.models.FoundMovieMessageDto;
 import com.jack.applications.websockets.models.SelectionMessageDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +41,7 @@ public class SelectionHandler extends TextWebSocketHandler {
         Movie movie = databaseHandler.getMovie(messageDto.getMovieId());
 
         if (room.likeMovie(movie, messageDto.getUserId(), room.getConnectedUsers().size())) {
-            broadcastMovieFound(new FoundMovieMessageDto(room.getFoundMovie()));
+            broadcastMovieFound(new FoundMovieMessageDto(room.getFoundMovieId()));
         }
     }
 
