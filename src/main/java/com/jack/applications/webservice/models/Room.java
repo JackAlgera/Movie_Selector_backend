@@ -13,7 +13,7 @@ public class Room {
 
     private String roomId;
     private ArrayList<User> connectedUsers;
-    private final Map<Integer, Selection> selectedMovies;
+    private final Map<String, Selection> selectedMovies;
 
     public Room() {
         this.selectedMovies = new HashMap<>();
@@ -30,7 +30,17 @@ public class Room {
         return null;
     }
 
-    public void likeMovie(Movie selectedMovie, String userId) {
+    public String getFoundMovie() {
+        for (Selection selection : selectedMovies.values()) {
+            if (selection.getTotalLikes() > 1 && selection.getTotalLikes() == connectedUsers.size()) {
+                return selection.getSelectedMovieId();
+            }
+        }
+
+        return null;
+    }
+
+    public boolean likeMovie(Movie selectedMovie, String userId, int numberOfUsersConnected) {
         User currentUser = null;
         for (User user : connectedUsers) {
             if (user.getUserId().equals(userId)) {
@@ -40,23 +50,25 @@ public class Room {
         }
 
         if (currentUser == null) {
-            return;
+            return false;
         }
 
-        if (!selectedMovies.containsKey(selectedMovie.getMovieId())) {
+        if (!selectedMovies.containsKey(selectedMovie.getImdbId())) {
             Selection newSelection = new Selection(selectedMovie);
             newSelection.addToSelection(currentUser);
-            selectedMovies.put(selectedMovie.getMovieId(), newSelection);
+            selectedMovies.put(selectedMovie.getImdbId(), newSelection);
 
             System.out.println(String.format("Added movie with id:%s, number of users that like this movie:%s",
-                    selectedMovie.getMovieId(),
-                    selectedMovies.get(selectedMovie.getMovieId()).getTotalLikes()));
+                    selectedMovie.getImdbId(),
+                    selectedMovies.get(selectedMovie.getImdbId()).getTotalLikes()));
+            return false;
         } else {
-            Selection existingSelection = selectedMovies.get(selectedMovie.getMovieId());
+            Selection existingSelection = selectedMovies.get(selectedMovie.getImdbId());
             existingSelection.addToSelection(currentUser);
             System.out.println(String.format("Movie with id:%s already exists, number of users that like this movie:%s",
-                    selectedMovie.getMovieId(),
-                    selectedMovies.get(selectedMovie.getMovieId()).getTotalLikes()));
+                    selectedMovie.getImdbId(),
+                    selectedMovies.get(selectedMovie.getImdbId()).getTotalLikes()));
+            return existingSelection.getTotalLikes() > 1 && existingSelection.getTotalLikes() >= numberOfUsersConnected;
         }
     }
 
@@ -82,6 +94,10 @@ public class Room {
 
     public void setConnectedUsers(ArrayList<User> connectedUsers) {
         this.connectedUsers = connectedUsers;
+    }
+
+    public Map<String, Selection> getSelectedMovies() {
+        return selectedMovies;
     }
 
     @Override

@@ -8,8 +8,6 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Movie {
 
-    @JsonProperty("id")
-    private int movieId;
     @JsonProperty("imdb_id")
     private String imdbId;
     @JsonProperty("adult")
@@ -45,14 +43,6 @@ public class Movie {
     private int voteCount;
 
     public Movie() {
-    }
-
-    public int getMovieId() {
-        return movieId;
-    }
-
-    public void setMovieId(int movieId) {
-        this.movieId = movieId;
     }
 
     public String getImdbId() {
@@ -226,7 +216,6 @@ public class Movie {
     @Override
     public String toString() {
         return "Movie{" +
-                "movieId=" + movieId +
                 ", imdbId=" + imdbId +
                 ", isAdult=" + isAdult +
                 ", budget=" + budget +

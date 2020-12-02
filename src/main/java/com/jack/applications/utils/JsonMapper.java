@@ -30,4 +30,8 @@ public class JsonMapper {
     public <T> T readValue(InputStream jsonString, Class<T> valueType) throws IOException {
         return this.objectMapper.readValue(jsonString, valueType);
     }
+
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
 }
