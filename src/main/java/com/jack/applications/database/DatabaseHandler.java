@@ -3,6 +3,9 @@ package com.jack.applications.database;
 import com.jack.applications.database.daos.TmdbDAOimpl;
 import com.jack.applications.database.models.*;
 import com.jack.applications.utils.JsonMapper;
+import com.jack.applications.webservice.handlers.RoomGarbageCollector;
+import com.jack.applications.webservice.handlers.RoomHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -26,6 +29,9 @@ public class DatabaseHandler {
     private TmdbDAOimpl tmdbDAOimpl;
 
     private Map<String, Movie> allMovies;
+
+    @Autowired
+    private RoomHandler roomHandler;
 
     public DatabaseHandler() {
         this.allMovies = new HashMap<>();
@@ -74,6 +80,9 @@ public class DatabaseHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        RoomGarbageCollector garbageCollector = new RoomGarbageCollector(roomHandler);
+        garbageCollector.start();
     }
 
     /**

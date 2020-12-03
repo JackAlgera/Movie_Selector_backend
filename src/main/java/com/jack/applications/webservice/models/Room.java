@@ -12,19 +12,19 @@ public class Room {
     private final static IdGenerator idGenerator = IdGenerator.getIdGenerator();
 
     private String roomId;
-    private ArrayList<User> connectedUsers;
+    private Map<String, User> connectedUsers;
     private final Map<String, Selection> selectedMovies;
     private Selection movieFound;
 
     public Room() {
         this.selectedMovies = new HashMap<>();
         this.roomId = idGenerator.getRandomId();
-        this.connectedUsers = new ArrayList<>();
+        this.connectedUsers = new HashMap<>();
         this.movieFound = null;
     }
 
     public User getUser(String userId) {
-        for (User user : connectedUsers) {
+        for (User user : connectedUsers.values()) {
             if (user.getUserId().equals(userId)) {
                 return user;
             }
@@ -47,17 +47,10 @@ public class Room {
             return false;
         }
 
-        User currentUser = null;
-        for (User user : connectedUsers) {
-            if (user.getUserId().equals(userId)) {
-                currentUser = user;
-                break;
-            }
-        }
-
-        if (currentUser == null) {
+        if (!connectedUsers.containsKey(userId)) {
             return false;
         }
+        User currentUser = connectedUsers.get(userId);
 
         if (!selectedMovies.containsKey(selectedMovie.getImdbId())) {
             Selection newSelection = new Selection(selectedMovie);
@@ -84,11 +77,13 @@ public class Room {
     }
 
     public void addUser(User newUser) {
-        this.connectedUsers.add(newUser);
+        this.connectedUsers.put(newUser.getUserId(), newUser);
     }
 
     public void removeUser(String userId) {
-        this.connectedUsers.remove(userId);
+        System.out.println("Removing user: " + userId);
+        User removedUser = this.connectedUsers.remove(userId);
+        System.out.println("Removed user: " + removedUser.toString());
     }
 
     public String getRoomId() {
@@ -99,12 +94,8 @@ public class Room {
         this.roomId = roomId;
     }
 
-    public ArrayList<User> getConnectedUsers() {
+    public Map<String, User> getConnectedUsers() {
         return connectedUsers;
-    }
-
-    public void setConnectedUsers(ArrayList<User> connectedUsers) {
-        this.connectedUsers = connectedUsers;
     }
 
     public Map<String, Selection> getSelectedMovies() {

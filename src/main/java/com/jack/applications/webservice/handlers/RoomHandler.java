@@ -3,6 +3,7 @@ package com.jack.applications.webservice.handlers;
 import com.jack.applications.webservice.models.Room;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,5 +32,14 @@ public class RoomHandler {
 
     public Map<String, Room> getAvailableRooms() {
         return availableRooms;
+    }
+
+    public void cleanRooms() {
+        ArrayList<Room> currentRooms = new ArrayList<>(availableRooms.values());
+        for (Room room : currentRooms) {
+            if (room.getConnectedUsers().size() <= 0) {
+                availableRooms.remove(room.getRoomId());
+            }
+        }
     }
 }
