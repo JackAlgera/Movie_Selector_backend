@@ -26,18 +26,13 @@ public class RoomController {
     @Autowired
     private DatabaseHandler databaseHandler;
 
-    @GetMapping(path = "/start")
-    public void start() {
-        databaseHandler.updateAllMovies();
-    }
-
     /**
      * Returns all available rooms.
      * @return
      */
     @GetMapping(path = "/rooms")
     public List<Room> getAvailableRooms() {
-        return new ArrayList<Room>(roomHandler.getAvailableRooms().values());
+        return new ArrayList<Room>(roomHandler.getAvailableRooms());
     }
 
     /**
@@ -76,14 +71,15 @@ public class RoomController {
     @PostMapping(path = "/rooms/{roomId}/users")
     public ResponseEntity<User> addUserToRoom(
             @PathVariable(name = "roomId") String roomId,
-            @RequestParam(required = true, name = "userName") String userName) {
+            @RequestParam(required = true, name = "userName") String userName,
+            @RequestParam(required = true, name = "userId") String userId) {
 
         Room room = roomHandler.getRoom(roomId);
         if(room == null) {
             throw new NotFoundException(String.format("Room with Id %s not found", roomId));
         }
 
-        User newUser = new User(userName);
+        User newUser = new User(userId, userName);
         room.addUser(newUser);
         return ResponseEntity.ok(newUser);
     }

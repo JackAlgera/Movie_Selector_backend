@@ -23,7 +23,7 @@ public class Selection {
     }
 
     public String getSelectedMovieId() {
-        return this.selectedMovie.getImdbId();
+        return this.selectedMovie.getMovieId();
     }
 
     public Movie getSelectedMovie() {

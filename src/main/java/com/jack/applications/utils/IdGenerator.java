@@ -1,24 +1,25 @@
 package com.jack.applications.utils;
 
-import java.util.UUID;
+import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
+
+@Service
 public class IdGenerator {
 
     private static IdGenerator instance;
 
-    private IdGenerator() {
-    }
+    private static final SecureRandom random = new SecureRandom();
 
-    public static IdGenerator getIdGenerator() {
-        if(instance == null) {
-            instance = new IdGenerator();
-        }
-
-        return instance;
-    }
+    private static final String ID_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     public String getRandomId() {
-        return UUID.randomUUID().toString();
+        StringBuilder newId = new StringBuilder();
+        for (int i = 0; i < 5; i++) {
+            newId.append(ID_CHARS.charAt(random.nextInt(ID_CHARS.length())));
+        }
+
+        return newId.toString();
     }
 
 }

@@ -2,7 +2,7 @@ package com.jack.applications.webservice.handlers;
 
 public class RoomGarbageCollector extends Thread {
 
-    private static long TIME_BETWEEN_CLEANUPS = 10000;
+    private static final long TIME_BETWEEN_CLEANUPS = 20000;
 
     private final RoomHandler roomHandler;
 

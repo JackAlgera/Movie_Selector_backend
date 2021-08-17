@@ -1,6 +1,6 @@
 package com.jack.applications.webservice.controllers;
 
-import com.jack.applications.database.DatabaseHandler;
+import com.jack.applications.database.daos.MovieDAOImpl;
 import com.jack.applications.database.models.Movie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,11 +14,16 @@ import java.util.List;
 public class MovieController {
 
     @Autowired
-    private DatabaseHandler databaseHandler;
+    private MovieDAOImpl movieDAO;
+
+    @GetMapping(path = "/start")
+    public void addTestingMovies() {
+        movieDAO.addTestingMovies();
+    }
 
     @GetMapping(path = "/movies")
     public List<Movie> getAllMovies() {
-        return databaseHandler.getAllMovies();
+        return movieDAO.getMovies();
     }
 
 }
