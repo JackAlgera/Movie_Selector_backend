@@ -1,6 +1,7 @@
 package com.jack.applications.database.daos;
 
 import com.jack.applications.database.models.Movie;
+import com.jack.applications.database.models.MovieGenre;
 import com.jack.applications.utils.IdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,12 +25,22 @@ public class MovieDAOImpl implements MovieDAO {
 
     public void addTestingMovies() {
         this.addMovie(
-                new Movie(
-                        idGenerator.getRandomId(),
-                        "Movie 1",
-                        129L,
-                        false
-                )
+            new Movie(
+                idGenerator.getRandomId(),
+                "Movie 1",
+                129L,
+                MovieGenre.COMEDY,
+                false
+            )
+        );
+        this.addMovie(
+            new Movie(
+                idGenerator.getRandomId(),
+                "Movie 2",
+                129L,
+                MovieGenre.HORROR,
+                false
+            )
         );
     }
 

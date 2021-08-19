@@ -1,16 +1,14 @@
 package com.jack.applications.webservice.models;
 
-import com.jack.applications.database.models.Movie;
-import com.jack.applications.utils.IdGenerator;
-
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Room {
-    private final static Long MAX_TIME_BEFORE_CLOSING_ROOM = 120L * 1000L; // 120s
+    private final static Long MAX_TIME_BEFORE_CLOSING_ROOM = 300_000L; // 300s
 
-    private String roomId;
+    private final String roomId;
     private final Map<String, User> connectedUsers;
     private final Map<String, Selection> selectedMovies;
     private Selection movieFound;
@@ -25,17 +23,12 @@ public class Room {
     }
 
     public User getUser(String userId) {
-        for (User user : connectedUsers.values()) {
-            if (user.getUserId().equals(userId)) {
-                return user;
-            }
-        }
-        return null;
+        return connectedUsers.get(userId);
     }
 
-    public String getFoundMovieId() {
+    public String foundMovieId() {
         for (Selection selection : selectedMovies.values()) {
-            if (selection.getTotalLikes() > 1 && selection.getTotalLikes() == connectedUsers.size()) {
+            if (selection.getTotalLikes() > 1 && selection.getTotalLikes() >= connectedUsers.size()) {
                 return selection.getSelectedMovieId();
             }
         }
@@ -43,7 +36,7 @@ public class Room {
         return null;
     }
 
-    public boolean likeMovie(Movie selectedMovie, String userId, int numberOfUsersConnected) {
+    public boolean likeMovie(String selectedMovieId, String userId) {
         if (movieFound != null) {
             return false;
         }
@@ -51,70 +44,66 @@ public class Room {
         if (!connectedUsers.containsKey(userId)) {
             return false;
         }
+
         User currentUser = connectedUsers.get(userId);
+        Selection currentSelection;
 
-        if (!selectedMovies.containsKey(selectedMovie.getMovieId())) {
-            Selection newSelection = new Selection(selectedMovie);
-            newSelection.addToSelection(currentUser);
-            selectedMovies.put(selectedMovie.getMovieId(), newSelection);
-
-            System.out.printf("Added movie with id:%s, number of users that like this movie:%s%n",
-                    selectedMovie.getMovieId(),
-                    selectedMovies.get(selectedMovie.getMovieId()).getTotalLikes());
-            return false;
+        if (!selectedMovies.containsKey(selectedMovieId)) {
+            currentSelection = new Selection(selectedMovieId);
+            selectedMovies.put(selectedMovieId, currentSelection);
+            System.out.printf("Added movie with id:%s", selectedMovieId);
         } else {
-            Selection existingSelection = selectedMovies.get(selectedMovie.getMovieId());
-            existingSelection.addToSelection(currentUser);
-            System.out.printf("Movie with id:%s already exists, number of users that like this movie:%s%n",
-                    selectedMovie.getMovieId(),
-                    selectedMovies.get(selectedMovie.getMovieId()).getTotalLikes());
-            if (existingSelection.getTotalLikes() > 1 && existingSelection.getTotalLikes() >= numberOfUsersConnected) {
-                movieFound = existingSelection;
-                timeBeforeClosingRoom = System.currentTimeMillis();
-                return true;
-            } else {
-                return false;
-            }
+            currentSelection = selectedMovies.get(selectedMovieId);
+            System.out.printf("Movie with id:%s already exists. ", selectedMovieId);
+        }
+
+        currentSelection.addToSelection(currentUser);
+        System.out.printf("Number of users that like this movie:%s%n", selectedMovies.get(selectedMovieId).getTotalLikes());
+
+        return foundMovie(currentSelection);
+    }
+
+    public boolean foundMovie(Selection selection) {
+        if (selection.getTotalLikes() > 1 && selection.getTotalLikes() >= getTotalConnectedUsers()) {
+            movieFound = selection;
+            timeBeforeClosingRoom = System.currentTimeMillis();
+            return true;
+        } else {
+            return false;
         }
     }
 
     public void addUser(User newUser) {
-        System.out.println(String.format("Adding user %s to room %s", newUser.getUserName(), this.roomId));
-        this.connectedUsers.put(newUser.getUserId(), newUser);
+        System.out.printf("Adding user %s to room %s%n", newUser.getUserName(), this.roomId);
+        connectedUsers.put(newUser.getUserId(), newUser);
     }
 
-    public void removeUser(String userId) {
-        System.out.println("Removing user: " + userId);
-        User removedUser = this.connectedUsers.remove(userId);
-        System.out.println("Removed user: " + removedUser.getUserName() + "from room " + this.getRoomId());
+    public User removeUser(String userId) {
+        return connectedUsers.remove(userId);
     }
 
     public String getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(String roomId) {
-        this.roomId = roomId;
+    public List<User> getConnectedUsers() {
+        return new ArrayList<>(connectedUsers.values());
     }
 
-    public Map<String, User> getConnectedUsers() {
-        return connectedUsers;
+    public int getTotalConnectedUsers() {
+        return connectedUsers.values().size();
     }
 
-    public Map<String, Selection> getSelectedMovies() {
-        return selectedMovies;
+    public List<Selection> getSelectedMovies() {
+        return new ArrayList<>(selectedMovies.values());
     }
 
     public Selection getMovieFound() {
         return movieFound;
     }
 
-    @Override
-    public String toString() {
-        return "Room{" +
-                "roomId='" + roomId + '\'' +
-                ", connectedUsers=" + connectedUsers +
-                '}';
+    public Long getTimeBeforeClosingRoom() {
+        return System.currentTimeMillis() - timeBeforeClosingRoom;
     }
 
     public boolean shouldCloseRoom() {
