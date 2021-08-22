@@ -28,6 +28,7 @@ public class RoomController {
 
     /**
      * Returns all available rooms.
+     *
      * @return
      */
     @GetMapping(path = "/rooms")
@@ -36,7 +37,19 @@ public class RoomController {
     }
 
     /**
+     * Gets room if it exists.
+     *
+     * @return
+     */
+    @GetMapping(path = "/rooms/{roomId}")
+    public ResponseEntity<Room> getRoom(@PathVariable String roomId) {
+        Room room = roomHandler.getRoom(roomId);
+        return room == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(room);
+    }
+
+    /**
      * Create new empty room.
+     *
      * @return
      * @throws URISyntaxException
      */
@@ -48,6 +61,7 @@ public class RoomController {
 
     /**
      * Delete room with provided ID, throws a 404 error if room not found.
+     *
      * @param roomId
      * @return
      */
