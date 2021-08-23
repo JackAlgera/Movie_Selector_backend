@@ -21,6 +21,9 @@ public class UserHandler {
     }
 
     public User generateNewUser(String userName) {
-        return new User(idGenerator.getRandomId(), userName);
+        User user = new User(idGenerator.getRandomId(), userName);
+        userMap.put(user.getUserId(), user);
+
+        return user;
     }
 }

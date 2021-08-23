@@ -84,9 +84,17 @@ public class RoomController {
         }
 
         Selection selection = room.getMovieFound();
-        return (selection != null) ? ResponseEntity.ok(movieDAO.getMovie(selection.getSelectedMovieId())) : null;
+        return null; // (selection != null) ? ResponseEntity.ok(movieDAO.getMovie(selection.getSelectedMovieId())) : null;
     }
 
+    /**
+     * Endpoint to like a movie in a room.
+     *
+     * @param roomId
+     * @param movieId
+     * @param userId
+     * @return
+     */
     @PostMapping(path = "/rooms/{roomId}/movies/{movieId}/like")
     public ResponseEntity<Boolean> likeMovie(@PathVariable String roomId,
                                              @PathVariable String movieId,

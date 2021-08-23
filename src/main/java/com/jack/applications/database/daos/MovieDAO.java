@@ -1,13 +1,14 @@
 package com.jack.applications.database.daos;
 
 import com.jack.applications.database.models.Movie;
+import com.jack.applications.database.resources.TMDBFilter;
 
 import java.util.List;
 
 public interface MovieDAO {
 
-    public List<Movie> getMovies();
+    List<Movie> getMovies(List<TMDBFilter> filters);
 
-    public Movie getMovie(String movieId);
+    Movie getMovie(Integer movieId);
 
 }

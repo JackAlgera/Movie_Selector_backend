@@ -9,11 +9,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Movie {
-    private Integer id;
-    private String title;
-    private String overview;
-    private String releaseDate;
-    private List<Genre> genres;
-    private String homepage;
+public class TMDBRequestWrapper {
+    private Integer page;
+    private Integer totalPages;
+    private Integer totalResults;
+    private List<Movie> results;
 }
