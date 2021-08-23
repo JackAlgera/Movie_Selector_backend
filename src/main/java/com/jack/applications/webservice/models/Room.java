@@ -36,7 +36,7 @@ public class Room {
         return null;
     }
 
-    public boolean likeMovie(String selectedMovieId, String userId) {
+    public boolean likeMovie(String movieId, String userId, Integer likeRating) {
         if (movieFound != null) {
             return false;
         }
@@ -48,17 +48,17 @@ public class Room {
         User currentUser = connectedUsers.get(userId);
         Selection currentSelection;
 
-        if (!selectedMovies.containsKey(selectedMovieId)) {
-            currentSelection = new Selection(selectedMovieId);
-            selectedMovies.put(selectedMovieId, currentSelection);
-            System.out.printf("Added movie with id:%s", selectedMovieId);
+        if (!selectedMovies.containsKey(movieId)) {
+            currentSelection = new Selection(movieId);
+            selectedMovies.put(movieId, currentSelection);
+            System.out.printf("Added movie with id:%s", movieId);
         } else {
-            currentSelection = selectedMovies.get(selectedMovieId);
-            System.out.printf("Movie with id:%s already exists. ", selectedMovieId);
+            currentSelection = selectedMovies.get(movieId);
+            System.out.printf("Movie with id:%s already exists. ", movieId);
         }
 
-        currentSelection.addToSelection(currentUser);
-        System.out.printf("Number of users that like this movie:%s%n", selectedMovies.get(selectedMovieId).getTotalLikes());
+        currentSelection.addToSelection(userId, likeRating);
+        System.out.printf("Number of users that like this movie:%s%n", selectedMovies.get(movieId).getTotalLikes());
 
         return foundMovie(currentSelection);
     }

@@ -8,10 +8,7 @@ import com.jack.applications.database.resources.TMDBFilter;
 import com.jack.applications.database.resources.TMDBFilterKeys;
 import com.jack.applications.database.services.GenreHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,8 +22,9 @@ public class MovieController {
     @Autowired
     private GenreHandler genreHandler;
 
-    @GetMapping(path = "/movies")
+    @PostMapping(path = "/movies")
     public List<Movie> getAllMovies(@RequestBody List<TMDBFilter> filters) {
+        System.out.println(filters);
         return movieDAO.getMovies(filters);
     }
 

@@ -1,37 +1,31 @@
 package com.jack.applications.webservice.models;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Selection {
 
     private final String selectedMovieId;
-    private final Map<String, User> usersThatLikedMovie;
+    private final Map<String, Integer> usersAndGivenRating;
     private int totalLikes;
 
     public Selection(String selectedMovieId) {
         this.selectedMovieId = selectedMovieId;
-        this.usersThatLikedMovie = new HashMap<>();
+        this.usersAndGivenRating = new HashMap<>();
         this.totalLikes = 0;
     }
 
-    public void addToSelection(User user) {
-        if (usersThatLikedMovie.containsKey(user.getUserId())) {
+    public void addToSelection(String userId, Integer likeRating) {
+        if (usersAndGivenRating.containsKey(userId)) {
             return;
         }
 
         this.totalLikes++;
-        this.usersThatLikedMovie.put(user.getUserId(), user);
+        this.usersAndGivenRating.put(userId, likeRating);
     }
 
     public String getSelectedMovieId() {
         return selectedMovieId;
-    }
-
-    public List<User> getUsersThatLikedMovie() {
-        return new ArrayList<>(usersThatLikedMovie.values());
     }
 
     public int getTotalLikes() {
