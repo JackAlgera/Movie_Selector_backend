@@ -1,6 +1,7 @@
 package com.jack.applications.database.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +14,10 @@ public class Movie {
     private Integer id;
     private String title;
     private String overview;
+    @JsonProperty("release_date")
     private String releaseDate;
-    private List<Genre> genres;
-    private String homepage;
+    @JsonProperty("genre_ids")
+    private List<Integer> genreIds;
+    @JsonProperty("poster_path")
+    private String posterPath;
 }
