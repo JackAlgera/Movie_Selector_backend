@@ -19,7 +19,7 @@ public class Room {
         this.roomId = roomId;
         this.connectedUsers = new HashMap<>();
         this.movieFound = null;
-        this.timeBeforeClosingRoom = -1L;
+        this.timeBeforeClosingRoom = System.currentTimeMillis();
     }
 
     public User getUser(String userId) {
@@ -27,6 +27,8 @@ public class Room {
     }
 
     public boolean likeMovie(Integer movieId, String userId, Integer likeRating) {
+        timeBeforeClosingRoom = System.currentTimeMillis();
+
         if (movieFound != null) {
             return true;
         }
@@ -99,10 +101,6 @@ public class Room {
     }
 
     public boolean shouldCloseRoom() {
-        if (timeBeforeClosingRoom < 0) {
-            return false;
-        }
-
         return this.getTimeBeforeClosingRoom() > MAX_TIME_BEFORE_CLOSING_ROOM;
     }
 }
