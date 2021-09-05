@@ -13,5 +13,5 @@ public class TMDBRequestWrapper {
     private Integer page;
     private Integer totalPages;
     private Integer totalResults;
-    private List<Movie> results;
+    private List<MovieWithoutGenres> results;
 }

@@ -1,10 +1,13 @@
 package com.jack.applications.database.daos;
 
+import com.jack.applications.database.models.Genre;
+import com.jack.applications.database.models.MovieWithoutGenres;
 import com.jack.applications.database.models.Movie;
 import com.jack.applications.database.models.TMDBRequestWrapper;
 import com.jack.applications.database.resources.TMDBConstants;
 import com.jack.applications.database.resources.TMDBFilter;
 import com.jack.applications.database.resources.TMDBFilterKeys;
+import com.jack.applications.database.services.GenreHandler;
 import com.jack.applications.utils.IdGenerator;
 import com.jack.applications.utils.JsonMapper;
 import org.apache.http.client.HttpClient;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class MovieDAOImpl implements MovieDAO {
@@ -26,6 +30,9 @@ public class MovieDAOImpl implements MovieDAO {
 
     @Autowired
     public IdGenerator idGenerator;
+
+    @Autowired
+    public GenreHandler genreHandler;
 
     private final HttpClient httpClient;
 
@@ -51,7 +58,7 @@ public class MovieDAOImpl implements MovieDAO {
             HttpGet request = new HttpGet(builder.build());
             TMDBRequestWrapper wrappedResponse = httpClient.execute(request, httpResponse ->
                     jsonMapper.readValue(httpResponse.getEntity().getContent(), TMDBRequestWrapper.class));
-            response = wrappedResponse.getResults();
+            response = convertMovie(wrappedResponse.getResults());
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
@@ -68,14 +75,29 @@ public class MovieDAOImpl implements MovieDAO {
             builder.setParameter(TMDBFilterKeys.API_KEY.getTag(), TMDBConstants.API_KEY);
 
             HttpGet request = new HttpGet(builder.build());
-            response = httpClient.execute(request, httpResponse -> {
-                System.out.println(httpResponse.getEntity().getContent());
-                return jsonMapper.readValue(httpResponse.getEntity().getContent(), Movie.class);
-            });
+            response = httpClient.execute(request, httpResponse ->
+                jsonMapper.readValue(httpResponse.getEntity().getContent(), Movie.class));
+
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
 
         return response;
+    }
+
+    private List<Movie> convertMovie(List<MovieWithoutGenres> moviesWithoutGenres) {
+        return moviesWithoutGenres.stream()
+                .map(movie -> Movie.builder()
+                    .id(movie.getId())
+                    .title(movie.getTitle())
+                    .overview(movie.getOverview())
+                    .releaseDate(movie.getReleaseDate())
+                    .posterPath(movie.getPosterPath())
+                    .genres(movie.getGenreIds().stream()
+                            .filter(genreHandler::containsGenre)
+                            .map(genreId -> new Genre(genreId, genreHandler.getGenre(genreId).getName()))
+                            .collect(Collectors.toList()))
+                    .build())
+                .collect(Collectors.toList());
     }
 }

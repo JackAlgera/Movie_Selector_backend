@@ -51,4 +51,8 @@ public class RoomHandler {
             }
         }
     }
+
+    public boolean isCorrectRating(Integer likeRating) {
+        return likeRating <= 5 && likeRating >= 1;
+    }
 }

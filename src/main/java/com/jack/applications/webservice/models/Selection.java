@@ -1,18 +1,21 @@
 package com.jack.applications.webservice.models;
 
+import lombok.Getter;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
 public class Selection {
 
-    private final String selectedMovieId;
+    private final Integer selectedMovieId;
     private final Map<String, Integer> usersAndGivenRating;
-    private int totalLikes;
+    private int totalRatings;
 
-    public Selection(String selectedMovieId) {
+    public Selection(Integer selectedMovieId) {
         this.selectedMovieId = selectedMovieId;
         this.usersAndGivenRating = new HashMap<>();
-        this.totalLikes = 0;
+        this.totalRatings = 0;
     }
 
     public void addToSelection(String userId, Integer likeRating) {
@@ -20,15 +23,11 @@ public class Selection {
             return;
         }
 
-        this.totalLikes++;
+        this.totalRatings++;
         this.usersAndGivenRating.put(userId, likeRating);
     }
 
-    public String getSelectedMovieId() {
-        return selectedMovieId;
-    }
-
-    public int getTotalLikes() {
-        return totalLikes;
+    public boolean allRatingsAboveValue(Integer val) {
+        return usersAndGivenRating.values().stream().noneMatch(rating -> rating < val);
     }
 }

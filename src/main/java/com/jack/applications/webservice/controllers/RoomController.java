@@ -76,6 +76,12 @@ public class RoomController {
         return ResponseEntity.ok(room);
     }
 
+    /**
+     * Returns movie that was found for the given room.
+     *
+     * @param roomId
+     * @return
+     */
     @GetMapping(path = "/rooms/{roomId}/foundMovie")
     public ResponseEntity<Movie> getFoundMovie(@PathVariable(name = "roomId") String roomId) {
         Room room = roomHandler.getRoom(roomId);
@@ -84,11 +90,11 @@ public class RoomController {
         }
 
         Selection selection = room.getMovieFound();
-        return null; // (selection != null) ? ResponseEntity.ok(movieDAO.getMovie(selection.getSelectedMovieId())) : null;
+        return (selection != null) ? ResponseEntity.ok(movieDAO.getMovie(selection.getSelectedMovieId() )) : ResponseEntity.notFound().build();
     }
 
     /**
-     * Endpoint to like a movie in a room.
+     * Endpoint to like a movie in a room. Returns true if a good movie was found.
      *
      * @param roomId
      * @param movieId
@@ -98,9 +104,13 @@ public class RoomController {
      */
     @PostMapping(path = "/rooms/{roomId}/movies/{movieId}/like")
     public ResponseEntity<Boolean> likeMovie(@PathVariable String roomId,
-                                             @PathVariable String movieId,
+                                             @PathVariable Integer movieId,
                                              @RequestParam(required = true, name = "userId") String userId,
                                              @RequestParam(required = true, name = "likeRating") Integer likeRating) {
+        if (!roomHandler.isCorrectRating(likeRating)) {
+            throw new NotFoundException(String.format("Room with Id %s not found", roomId));
+        }
+
         Room room = roomHandler.getRoom(roomId);
         if (room == null) {
             throw new NotFoundException(String.format("Room with Id %s not found", roomId));

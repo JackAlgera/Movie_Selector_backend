@@ -28,6 +28,14 @@ public class GenreHandler {
         this.genreDAOImpl.getAllGenres().forEach(genre -> genreMap.put(genre.getId(), genre));
     }
 
+    public Genre getGenre(Integer genreId) {
+        return genreMap.get(genreId);
+    }
+
+    public boolean containsGenre(Integer genreId) {
+        return genreMap.containsKey(genreId);
+    }
+
     public List<Genre> getAllGenres() {
         return new ArrayList<>(genreMap.values());
     }
