@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Room {
+    private static final Integer MAX_MOVIES_PER_REQUEST = 10;
     private final static Long MAX_TIME_BEFORE_CLOSING_ROOM = 600_000L; // 600s = 10 mins
 
     private final String roomId;
@@ -102,6 +103,7 @@ public class Room {
 
         return selectedMovies.values().stream()
                 .filter(selection -> !selection.userLikedMovie(userId))
+                .limit(MAX_MOVIES_PER_REQUEST)
                 .map(Selection::getSelectedMovieId)
                 .collect(Collectors.toList());
     }

@@ -67,6 +67,13 @@ public class MovieController {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Endpoints that gets movies the user has not yet seen.
+     *
+     * @param roomId
+     * @param userId
+     * @return
+     */
     @GetMapping(path = "/room/{roomId}/users/{userId}/unrated-movies")
     public List<Movie> getUnratedMoviesByUser(@PathVariable(value = "roomId") String roomId,
                                               @PathVariable(value = "userId") String userId) {
