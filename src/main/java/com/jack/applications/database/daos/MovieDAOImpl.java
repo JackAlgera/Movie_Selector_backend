@@ -8,6 +8,7 @@ import com.jack.applications.database.resources.TMDBConstants;
 import com.jack.applications.database.resources.TMDBFilter;
 import com.jack.applications.database.resources.TMDBFilterKeys;
 import com.jack.applications.database.services.GenreHandler;
+import com.jack.applications.database.services.MovieCacheHandler;
 import com.jack.applications.utils.IdGenerator;
 import com.jack.applications.utils.JsonMapper;
 import org.apache.http.client.HttpClient;
@@ -29,7 +30,10 @@ public class MovieDAOImpl implements MovieDAO {
     private JsonMapper jsonMapper;
 
     @Autowired
-    public IdGenerator idGenerator;
+    private IdGenerator idGenerator;
+
+    @Autowired
+    private MovieCacheHandler movieCacheHandler;
 
     @Autowired
     public GenreHandler genreHandler;
@@ -63,11 +67,23 @@ public class MovieDAOImpl implements MovieDAO {
             e.printStackTrace();
         }
 
+        if (response != null) {
+            response.forEach(movie -> {
+                if (!movieCacheHandler.isMovieAlreadyCached(movie.getId())) {
+                    movieCacheHandler.cacheMovie(movie);
+                }
+            });
+        }
+
         return response;
     }
 
     @Override
     public Movie getMovie(Integer movieId) {
+        if (movieCacheHandler.isMovieAlreadyCached(movieId)) {
+            return movieCacheHandler.getCachedMovie(movieId);
+        }
+
         Movie response = null;
 
         try {
@@ -80,6 +96,10 @@ public class MovieDAOImpl implements MovieDAO {
 
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
+        }
+
+        if (response != null) {
+            movieCacheHandler.cacheMovie(response);
         }
 
         return response;

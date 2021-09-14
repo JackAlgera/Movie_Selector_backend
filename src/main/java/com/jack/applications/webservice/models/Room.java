@@ -1,9 +1,12 @@
 package com.jack.applications.webservice.models;
 
+import com.jack.applications.webservice.statuscodes.NotFoundException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Room {
     private final static Long MAX_TIME_BEFORE_CLOSING_ROOM = 600_000L; // 600s = 10 mins
@@ -90,6 +93,25 @@ public class Room {
 
     public List<Selection> getSelectedMovies() {
         return new ArrayList<>(selectedMovies.values());
+    }
+
+    public List<Integer> getUnratedMoviesForUser(String userId) {
+        if (!connectedUsers.containsKey(userId)) {
+            throw new NotFoundException(String.format("User with Id %s not in room %s", userId, roomId));
+        }
+
+        return selectedMovies.values().stream()
+                .filter(selection -> !selection.userLikedMovie(userId))
+                .map(Selection::getSelectedMovieId)
+                .collect(Collectors.toList());
+    }
+
+    public boolean checkIfUserRatedMovie(String userId, Integer movieId) {
+        if (!selectedMovies.containsKey(movieId)) {
+            return false;
+        }
+
+        return selectedMovies.get(movieId).userLikedMovie(userId);
     }
 
     public Selection getMovieFound() {

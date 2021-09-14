@@ -2,15 +2,19 @@ package com.jack.applications.webservice.controllers;
 
 import com.jack.applications.database.daos.MovieDAOImpl;
 import com.jack.applications.database.models.Genre;
-import com.jack.applications.database.models.MovieWithoutGenres;
 import com.jack.applications.database.models.Movie;
 import com.jack.applications.database.resources.TMDBFilter;
 import com.jack.applications.database.services.GenreHandler;
+import com.jack.applications.webservice.handlers.RoomHandler;
+import com.jack.applications.webservice.models.Room;
+import com.jack.applications.webservice.models.User;
+import com.jack.applications.webservice.statuscodes.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
@@ -21,6 +25,9 @@ public class MovieController {
 
     @Autowired
     private GenreHandler genreHandler;
+
+    @Autowired
+    private RoomHandler roomHandler;
 
     /**
      * Endpoint to get movie info.
@@ -35,15 +42,42 @@ public class MovieController {
     }
 
     /**
-     * Endpoint to get list of movies. Filters can be provided, or left empty.
+     * Endpoint to get list of movies filtering out movies the user has already seen.
+     * Filters can be provided, or left empty.
      *
      * @param filters
      * @return
      */
-    @PostMapping(path = "/movies")
-    public List<Movie> getAllMovies(@RequestBody List<TMDBFilter> filters) {
-        System.out.println(filters);
-        return movieDAO.getMovies(filters);
+    @PostMapping(path = "/room/{roomId}/users/{userId}/movies")
+    public List<Movie> getAllMovies(@RequestBody List<TMDBFilter> filters,
+                                    @PathVariable(value = "roomId") String roomId,
+                                    @PathVariable(value = "userId") String userId) {
+        Room room = roomHandler.getRoom(roomId);
+        if(room == null) {
+            throw new NotFoundException(String.format("Room with Id %s not found", roomId));
+        }
+
+        User user = room.getUser(userId);
+        if (user == null) {
+            throw new NotFoundException(String.format("User with Id %s in room with Id %s not found", userId, roomId));
+        }
+
+        return movieDAO.getMovies(filters).stream()
+                .filter(movie -> !room.checkIfUserRatedMovie(userId, movie.getId()))
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping(path = "/room/{roomId}/users/{userId}/unrated-movies")
+    public List<Movie> getUnratedMoviesByUser(@PathVariable(value = "roomId") String roomId,
+                                              @PathVariable(value = "userId") String userId) {
+        Room room = roomHandler.getRoom(roomId);
+        if(room == null) {
+            throw new NotFoundException(String.format("Room with Id %s not found", roomId));
+        }
+
+        return room.getUnratedMoviesForUser(userId).stream()
+                .map(movieDAO::getMovie)
+                .collect(Collectors.toList());
     }
 
     /**

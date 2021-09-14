@@ -4,6 +4,7 @@ public enum TMDBFilterKeys {
     API_KEY("api_key"),
     PAGE("page"),
     PRIMARY_RELEASE_DATE_GTE("primary_release_date.gte"),
+    PRIMARY_RELEASE_DATE_LTE("primary_release_date.gte"),
     WITH_GENRES("with_genres"),
     SORT_BY("sort_by");
 

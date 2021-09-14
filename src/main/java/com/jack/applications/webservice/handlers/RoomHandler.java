@@ -47,6 +47,7 @@ public class RoomHandler {
         ArrayList<Room> currentRooms = new ArrayList<>(availableRooms.values());
         for (Room room : currentRooms) {
             if (room.shouldCloseRoom()) {
+                System.out.printf("Removing room %s\n", room.getRoomId());
                 availableRooms.remove(room.getRoomId());
             }
         }

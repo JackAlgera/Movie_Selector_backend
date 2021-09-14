@@ -30,4 +30,8 @@ public class Selection {
     public boolean allRatingsAboveValue(Integer val) {
         return usersAndGivenRating.values().stream().noneMatch(rating -> rating < val);
     }
+
+    public boolean userLikedMovie(String userId) {
+        return usersAndGivenRating.containsKey(userId);
+    }
 }
