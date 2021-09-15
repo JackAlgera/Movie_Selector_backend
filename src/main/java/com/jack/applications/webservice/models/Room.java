@@ -1,5 +1,6 @@
 package com.jack.applications.webservice.models;
 
+import com.jack.applications.webservice.statuscodes.IncorrectRequestException;
 import com.jack.applications.webservice.statuscodes.NotFoundException;
 
 import java.util.ArrayList;
@@ -9,7 +10,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Room {
-    private static final Integer MAX_MOVIES_PER_REQUEST = 10;
     private final static Long MAX_TIME_BEFORE_CLOSING_ROOM = 600_000L; // 600s = 10 mins
 
     private final String roomId;
@@ -96,14 +96,18 @@ public class Room {
         return new ArrayList<>(selectedMovies.values());
     }
 
-    public List<Integer> getUnratedMoviesForUser(String userId) {
+    public List<Integer> getUnratedMoviesForUser(String userId, Integer maxMoviesPerRequest) {
+        if (maxMoviesPerRequest < 0) {
+            throw new IncorrectRequestException("maxMoviesPerRequest needs to be greater that 0.");
+        }
+
         if (!connectedUsers.containsKey(userId)) {
             throw new NotFoundException(String.format("User with Id %s not in room %s", userId, roomId));
         }
 
         return selectedMovies.values().stream()
                 .filter(selection -> !selection.userLikedMovie(userId))
-                .limit(MAX_MOVIES_PER_REQUEST)
+                .limit(maxMoviesPerRequest)
                 .map(Selection::getSelectedMovieId)
                 .collect(Collectors.toList());
     }

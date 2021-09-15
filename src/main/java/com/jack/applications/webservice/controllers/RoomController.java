@@ -83,7 +83,7 @@ public class RoomController {
      * @return
      */
     @GetMapping(path = "/rooms/{roomId}/foundMovie")
-    public ResponseEntity<Movie> getFoundMovie(@PathVariable(name = "roomId") String roomId) {
+    public ResponseEntity<Movie> getFoundMovie(@PathVariable String roomId) {
         Room room = roomHandler.getRoom(roomId);
         if(room == null) {
             throw new NotFoundException(String.format("Room with Id %s not found", roomId));
@@ -105,8 +105,8 @@ public class RoomController {
     @PostMapping(path = "/rooms/{roomId}/movies/{movieId}/like")
     public ResponseEntity<Boolean> likeMovie(@PathVariable String roomId,
                                              @PathVariable Integer movieId,
-                                             @RequestParam(required = true, name = "userId") String userId,
-                                             @RequestParam(required = true, name = "likeRating") Integer likeRating) {
+                                             @RequestParam(name = "userId") String userId,
+                                             @RequestParam(name = "likeRating") Integer likeRating) {
         if (!roomHandler.isCorrectRating(likeRating)) {
             throw new NotFoundException(String.format("Room with Id %s not found", roomId));
         }

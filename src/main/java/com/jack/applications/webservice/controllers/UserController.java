@@ -27,7 +27,7 @@ public class UserController {
      * @return
      */
     @PostMapping(path = "/users")
-    public ResponseEntity<User> createNewUser(@RequestParam(required = true, name = "userName") String userName) {
+    public ResponseEntity<User> createNewUser(@RequestParam(name = "userName") String userName) {
         return ResponseEntity.ok(userHandler.generateNewUser(userName));
     }
 
@@ -38,7 +38,7 @@ public class UserController {
      * @return
      */
     @GetMapping(path = "/rooms/{roomId}/users")
-    public ResponseEntity<List<User>> getUsersInRoom(@PathVariable(name = "roomId") String roomId) {
+    public ResponseEntity<List<User>> getUsersInRoom(@PathVariable String roomId) {
         Room room = roomHandler.getRoom(roomId);
         if(room == null) {
             throw new NotFoundException(String.format("Room with Id %s not found", roomId));
@@ -56,8 +56,8 @@ public class UserController {
      */
     @GetMapping(path = "/rooms/{roomId}/users/{userId}")
     public ResponseEntity<User> isUserInRoom(
-            @PathVariable(name = "roomId") String roomId,
-            @PathVariable(name = "userId") String userId) {
+            @PathVariable String roomId,
+            @PathVariable String userId) {
         Room room = roomHandler.getRoom(roomId);
         if(room == null) {
             throw new NotFoundException(String.format("Room with Id %s not found", roomId));
@@ -76,9 +76,9 @@ public class UserController {
      */
     @PostMapping(path = "/rooms/{roomId}/users")
     public ResponseEntity<User> addUserToRoom(
-            @PathVariable(name = "roomId") String roomId,
-            @RequestParam(required = true, name = "userName") String userName,
-            @RequestParam(required = true, name = "userId") String userId) {
+            @PathVariable String roomId,
+            @RequestParam String userName,
+            @RequestParam String userId) {
         Room room = roomHandler.getRoom(roomId);
         if(room == null) {
             throw new NotFoundException(String.format("Room with Id %s not found", roomId));
@@ -97,9 +97,7 @@ public class UserController {
      * @return
      */
     @DeleteMapping(path = "/rooms/{roomId}/users/{userId}")
-    public ResponseEntity<User> removeUserFromRoom(
-            @PathVariable(name = "roomId") String roomId,
-            @PathVariable(name = "userId") String userId) {
+    public ResponseEntity<User> removeUserFromRoom(@PathVariable String roomId, @PathVariable String userId) {
         Room room = roomHandler.getRoom(roomId);
         if(room == null) {
             throw new NotFoundException(String.format("Room with Id %s not found", roomId));

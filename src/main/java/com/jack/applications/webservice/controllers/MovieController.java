@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 public class MovieController {
 
+    private static final Integer MAX_MOVIES_PER_REQUEST = 10;
+
     @Autowired
     private MovieDAOImpl movieDAO;
 
@@ -36,7 +38,7 @@ public class MovieController {
      * @return
      */
     @GetMapping(path = "/movies/{movieId}")
-    public ResponseEntity<Movie> getMovie(@PathVariable(value = "movieId") Integer movieId) {
+    public ResponseEntity<Movie> getMovie(@PathVariable Integer movieId) {
         Movie movie = movieDAO.getMovie(movieId);
         return movie != null ? ResponseEntity.ok(movie) : ResponseEntity.notFound().build();
     }
@@ -50,8 +52,8 @@ public class MovieController {
      */
     @PostMapping(path = "/room/{roomId}/users/{userId}/movies")
     public List<Movie> getAllMovies(@RequestBody List<TMDBFilter> filters,
-                                    @PathVariable(value = "roomId") String roomId,
-                                    @PathVariable(value = "userId") String userId) {
+                                    @PathVariable String roomId,
+                                    @PathVariable String userId) {
         Room room = roomHandler.getRoom(roomId);
         if(room == null) {
             throw new NotFoundException(String.format("Room with Id %s not found", roomId));
@@ -75,14 +77,16 @@ public class MovieController {
      * @return
      */
     @GetMapping(path = "/room/{roomId}/users/{userId}/unrated-movies")
-    public List<Movie> getUnratedMoviesByUser(@PathVariable(value = "roomId") String roomId,
-                                              @PathVariable(value = "userId") String userId) {
+    public List<Movie> getUnratedMoviesByUser(@PathVariable String roomId,
+                                              @PathVariable String userId,
+                                              @RequestParam(name = "maxMoviesPerRequest") Integer maxMoviesPerRequest) {
         Room room = roomHandler.getRoom(roomId);
         if(room == null) {
             throw new NotFoundException(String.format("Room with Id %s not found", roomId));
         }
 
-        return room.getUnratedMoviesForUser(userId).stream()
+        return room.getUnratedMoviesForUser(userId, maxMoviesPerRequest)
+                .stream()
                 .map(movieDAO::getMovie)
                 .collect(Collectors.toList());
     }
