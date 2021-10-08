@@ -1,4 +1,4 @@
-package com.jack.applications.webservice.statuscodes;
+package com.jack.applications.webservice.exceptions.statuscodes;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;

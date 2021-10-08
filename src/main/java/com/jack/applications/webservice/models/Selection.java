@@ -1,37 +1,32 @@
 package com.jack.applications.webservice.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import java.io.Serializable;
+import java.util.UUID;
 
-@Getter
-public class Selection {
-
-    private final Integer selectedMovieId;
-    private final Map<String, Integer> usersAndGivenRating;
-    private int totalRatings;
-
-    public Selection(Integer selectedMovieId) {
-        this.selectedMovieId = selectedMovieId;
-        this.usersAndGivenRating = new HashMap<>();
-        this.totalRatings = 0;
-    }
-
-    public void addToSelection(String userId, Integer likeRating) {
-        if (usersAndGivenRating.containsKey(userId)) {
-            return;
-        }
-
-        this.totalRatings++;
-        this.usersAndGivenRating.put(userId, likeRating);
-    }
-
-    public boolean allRatingsAboveValue(Integer val) {
-        return usersAndGivenRating.values().stream().noneMatch(rating -> rating < val);
-    }
-
-    public boolean userLikedMovie(String userId) {
-        return usersAndGivenRating.containsKey(userId);
-    }
+@Data
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@IdClass(SelectionId.class)
+public class Selection implements Serializable {
+    @Id
+    @Column(updatable = false, nullable = false, length = 50)
+    private String roomId;
+    @Id
+    @Column(updatable = false, nullable = false, length = 50)
+    @Type(type = "uuid-char")
+    private UUID userId;
+    @Id
+    private Integer movieId;
+    private Integer rating;
 }

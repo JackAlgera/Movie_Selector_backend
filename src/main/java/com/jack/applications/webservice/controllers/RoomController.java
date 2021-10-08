@@ -1,40 +1,34 @@
 package com.jack.applications.webservice.controllers;
 
-import com.jack.applications.database.daos.MovieDAOImpl;
-import com.jack.applications.database.models.Movie;
+import com.jack.applications.webservice.exceptions.RoomNotFoundException;
+import com.jack.applications.webservice.exceptions.UserNotFoundException;
 import com.jack.applications.webservice.handlers.RoomHandler;
+import com.jack.applications.webservice.handlers.UserHandler;
 import com.jack.applications.webservice.models.Room;
-import com.jack.applications.webservice.models.Selection;
 import com.jack.applications.webservice.models.User;
-import com.jack.applications.webservice.statuscodes.NotFoundException;
+import com.jack.applications.webservice.exceptions.statuscodes.IncorrectRequestException;
+import com.jack.applications.webservice.exceptions.statuscodes.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 public class RoomController {
 
     @Autowired
-    private RoomHandler roomHandler;
+    private UserHandler userHandler;
 
     @Autowired
-    private MovieDAOImpl movieDAO;
+    private RoomHandler roomHandler;
 
-    /**
-     * Returns all available rooms.
-     *
-     * @return
-     */
-    @GetMapping(path = "/rooms")
-    public List<Room> getAvailableRooms() {
-        return new ArrayList<>(roomHandler.getAvailableRooms());
-    }
+//    @Autowired
+//    private MovieDAOImpl movieDAO;
 
     /**
      * Gets room if it exists.
@@ -43,20 +37,33 @@ public class RoomController {
      */
     @GetMapping(path = "/rooms/{roomId}")
     public ResponseEntity<Room> getRoom(@PathVariable String roomId) {
-        Room room = roomHandler.getRoom(roomId);
-        return room == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(room);
+        try {
+            Room room = roomHandler.findRoomById(roomId);
+            return new ResponseEntity<>(room, HttpStatus.OK);
+        } catch (RoomNotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        }
     }
 
     /**
-     * Create new empty room.
+     * Returns all available rooms.
      *
      * @return
-     * @throws URISyntaxException
+     */
+    @GetMapping(path = "/rooms")
+    public List<Room> findAllRooms() {
+        return new ArrayList<>(roomHandler.findAllRooms());
+    }
+
+    /**
+     * Generate new empty room.
+     *
+     * @return
      */
     @PostMapping(path = "/rooms")
-    public ResponseEntity<Room> createNewRoom() throws URISyntaxException {
-        Room newRoom = roomHandler.createNewRoom();
-        return ResponseEntity.created(new URI(newRoom.getRoomId())).body(newRoom);
+    public ResponseEntity<Room> generateNewRoom() {
+        Room newRoom = roomHandler.generateNewRoom();
+        return new ResponseEntity<>(newRoom, HttpStatus.CREATED);
     }
 
     /**
@@ -66,14 +73,46 @@ public class RoomController {
      * @return
      */
     @DeleteMapping(path = "/rooms/{roomId}")
-    public ResponseEntity<Room> deleteRoom(@PathVariable String roomId) {
-        Room room = roomHandler.removeRoom(roomId);
+    public ResponseEntity<?> deleteRoom(@PathVariable String roomId) {
+        roomHandler.deleteRoom(roomId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
-        if(room == null) {
-            throw new NotFoundException(String.format("Room with Id %s not found", roomId));
+    /**
+     * Get users for room.
+     *
+     * @param roomId
+     * @return
+     */
+    @GetMapping(path = "/rooms/{roomId}/users")
+    public ResponseEntity<List<User>> getUsersInRoom(@PathVariable String roomId) {
+        try {
+            Room room = roomHandler.findRoomById(roomId);
+            return ResponseEntity.ok(room.getConnectedUsers());
+        } catch (RoomNotFoundException e) {
+            throw new NotFoundException(e.getMessage());
         }
+    }
 
-        return ResponseEntity.ok(room);
+    /**
+     * Add user to room.
+     *
+     * @param roomId
+     * @param userId
+     * @return
+     */
+    @PutMapping(path = "/rooms/{roomId}/add-user")
+    public ResponseEntity<User> addUserToRoom(@PathVariable String roomId, @RequestParam String userId) {
+        try {
+            Room room = roomHandler.findRoomById(roomId);
+            User user = userHandler.findUserById(UUID.fromString(userId));
+            user.setRoom(room);
+            return ResponseEntity.ok(userHandler.updateUser(user));
+        } catch (UserNotFoundException | RoomNotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new IncorrectRequestException(String.format("%s is not a valid UUID.", userId));
+        }
     }
 
     /**
@@ -82,45 +121,13 @@ public class RoomController {
      * @param roomId
      * @return
      */
-    @GetMapping(path = "/rooms/{roomId}/foundMovie")
-    public ResponseEntity<Movie> getFoundMovie(@PathVariable String roomId) {
-        Room room = roomHandler.getRoom(roomId);
-        if(room == null) {
-            throw new NotFoundException(String.format("Room with Id %s not found", roomId));
+    @GetMapping(path = "/rooms/{roomId}/found-movie-id")
+    public ResponseEntity<Integer> getFoundMovieId(@PathVariable String roomId) {
+        try {
+            Room room = roomHandler.findRoomById(roomId);
+            return ResponseEntity.ok(room.getFoundMovieId());
+        } catch (UserNotFoundException | RoomNotFoundException e) {
+            throw new NotFoundException(e.getMessage());
         }
-
-        Selection selection = room.getMovieFound();
-        return (selection != null) ? ResponseEntity.ok(movieDAO.getMovie(selection.getSelectedMovieId() )) : ResponseEntity.notFound().build();
-    }
-
-    /**
-     * Endpoint to like a movie in a room. Returns true if a good movie was found.
-     *
-     * @param roomId
-     * @param movieId
-     * @param userId
-     * @param likeRating
-     * @return
-     */
-    @PostMapping(path = "/rooms/{roomId}/movies/{movieId}/like")
-    public ResponseEntity<Boolean> likeMovie(@PathVariable String roomId,
-                                             @PathVariable Integer movieId,
-                                             @RequestParam(name = "userId") String userId,
-                                             @RequestParam(name = "likeRating") Integer likeRating) {
-        if (!roomHandler.isCorrectRating(likeRating)) {
-            throw new NotFoundException(String.format("Room with Id %s not found", roomId));
-        }
-
-        Room room = roomHandler.getRoom(roomId);
-        if (room == null) {
-            throw new NotFoundException(String.format("Room with Id %s not found", roomId));
-        }
-
-        User user = room.getUser(userId);
-        if (user == null) {
-            throw new NotFoundException(String.format("User with Id %s in room with Id %s not found", userId, roomId));
-        }
-
-        return ResponseEntity.ok(room.likeMovie(movieId, userId, likeRating));
     }
 }

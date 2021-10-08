@@ -1,112 +1,151 @@
 package com.jack.applications.webservice.controllers;
 
-import com.jack.applications.webservice.handlers.RoomHandler;
+import com.jack.applications.webservice.exceptions.MovieAlreadyFoundForRoomException;
+import com.jack.applications.webservice.exceptions.MovieNotFoundException;
+import com.jack.applications.webservice.exceptions.UserNotFoundException;
+import com.jack.applications.webservice.exceptions.statuscodes.IncorrectRequestException;
+import com.jack.applications.webservice.exceptions.statuscodes.NotFoundException;
+import com.jack.applications.webservice.handlers.MovieHandler;
+import com.jack.applications.webservice.handlers.SelectionHandler;
 import com.jack.applications.webservice.handlers.UserHandler;
-import com.jack.applications.webservice.models.Room;
+import com.jack.applications.webservice.models.Selection;
 import com.jack.applications.webservice.models.User;
-import com.jack.applications.webservice.statuscodes.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class UserController {
 
     @Autowired
-    private RoomHandler roomHandler;
+    private SelectionHandler selectionHandler;
+
+    @Autowired
+    private MovieHandler movieHandler;
 
     @Autowired
     private UserHandler userHandler;
 
     /**
-     * Generates a new user with own Id. This should be stored in cache for future use on client-side.
+     * Get user.
      *
-     * @param userName
+     * @param userId
+     * @return
+     */
+    @GetMapping(path = "/users/{userId}")
+    public ResponseEntity<User> getUserById(@PathVariable String userId) {
+        try {
+            User user = userHandler.findUserById(UUID.fromString(userId));
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new IncorrectRequestException(String.format("%s is not a valid UUID.", userId));
+        }
+    }
+
+    /**
+     * Get all users.
+     *
+     * @return
+     */
+    @GetMapping(path = "/users")
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userHandler.findAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    /**
+     * Generates a new user. This should be stored in cache for future use on client-side.
+     *
+     * @param user
      * @return
      */
     @PostMapping(path = "/users")
-    public ResponseEntity<User> createNewUser(@RequestParam(name = "userName") String userName) {
-        return ResponseEntity.ok(userHandler.generateNewUser(userName));
+    public ResponseEntity<User> addUser(@RequestBody User user) {
+        User newUser = userHandler.createUser(user);
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
     /**
-     * Get users for room.
+     * Updates a user. This should be stored in cache for future use on client-side.
      *
-     * @param roomId
+     * @param user
      * @return
      */
-    @GetMapping(path = "/rooms/{roomId}/users")
-    public ResponseEntity<List<User>> getUsersInRoom(@PathVariable String roomId) {
-        Room room = roomHandler.getRoom(roomId);
-        if(room == null) {
-            throw new NotFoundException(String.format("Room with Id %s not found", roomId));
+    @PutMapping(path = "/users")
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
+        try {
+            User updatedUser = userHandler.updateUser(user);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            throw new NotFoundException(e.getMessage());
         }
-
-        return ResponseEntity.ok(room.getConnectedUsers());
     }
 
     /**
-     * Endpoint to check whether a user is in a room or not.
+     * Deletes a user.
      *
-     * @param roomId
      * @param userId
      * @return
      */
-    @GetMapping(path = "/rooms/{roomId}/users/{userId}")
-    public ResponseEntity<User> isUserInRoom(
-            @PathVariable String roomId,
-            @PathVariable String userId) {
-        Room room = roomHandler.getRoom(roomId);
-        if(room == null) {
-            throw new NotFoundException(String.format("Room with Id %s not found", roomId));
+    @DeleteMapping(path = "/users/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable String userId) {
+        try {
+            User user = userHandler.findUserById(UUID.fromString(userId));
+            selectionHandler.deleteAllUserRatings(user);
+            userHandler.deleteUser(user.getUserId());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            throw new NotFoundException(e.getMessage());
         }
-
-        User user = room.getUser(userId);
-        return user == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(user);
+        catch (IllegalArgumentException e) {
+            throw new IncorrectRequestException(String.format("%s is not a valid UUID.", userId));
+        }
     }
 
-    /**
-     * Add new user to room.
-     *
-     * @param roomId
-     * @param userName
-     * @return
-     */
-    @PostMapping(path = "/rooms/{roomId}/users")
-    public ResponseEntity<User> addUserToRoom(
-            @PathVariable String roomId,
-            @RequestParam String userName,
-            @RequestParam String userId) {
-        Room room = roomHandler.getRoom(roomId);
-        if(room == null) {
-            throw new NotFoundException(String.format("Room with Id %s not found", roomId));
-        }
+    @PostMapping(path = "/users/{userId}/rate-movie")
+    public ResponseEntity<?> rateMovie(@PathVariable String userId,
+                                       @RequestParam Integer movieId,
+                                       @RequestParam Integer rating) {
+        try {
+            if (!selectionHandler.isCorrectRating(rating)) {
+                throw new IncorrectRequestException(String.format("Rating needs to be 5 >= rating (%d) >= 1.", rating));
+            }
 
-        User newUser = new User(userId, userName);
-        room.addUser(newUser);
-        return ResponseEntity.ok(newUser);
+            User user = userHandler.findUserById(UUID.fromString(userId));
+            if (user.getRoom() == null) {
+                throw new IncorrectRequestException(String.format("User with Id %s not in room.", userId));
+            }
+            movieHandler.checkMovieExists(movieId);
+            selectionHandler.rateMovie(user, movieId, rating);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (UserNotFoundException | MovieNotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new IncorrectRequestException(String.format("%s is not a valid UUID.", userId));
+        } catch (MovieAlreadyFoundForRoomException e) {
+            throw new IncorrectRequestException(e.getMessage());
+        }
     }
 
-    /**
-     * Remove user from room.
-     *
-     * @param roomId
-     * @param userId
-     * @return
-     */
-    @DeleteMapping(path = "/rooms/{roomId}/users/{userId}")
-    public ResponseEntity<User> removeUserFromRoom(@PathVariable String roomId, @PathVariable String userId) {
-        Room room = roomHandler.getRoom(roomId);
-        if(room == null) {
-            throw new NotFoundException(String.format("Room with Id %s not found", roomId));
+    @GetMapping(path = "/users/{userId}/rated-movies")
+    public ResponseEntity<List<Selection>> getRatedMovies(@PathVariable String userId) {
+        try {
+            User user = userHandler.findUserById(UUID.fromString(userId));
+            if (user.getRoom() == null) {
+                throw new IncorrectRequestException(String.format("User with Id %s not in room.", userId));
+            }
+            List<Selection> selections = selectionHandler.getUserRatings(user);
+            return new ResponseEntity<>(selections, HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            throw new NotFoundException(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new IncorrectRequestException(String.format("%s is not a valid UUID.", userId));
         }
-        User user = room.getUser(userId);
-        if(user == null) {
-            throw new NotFoundException(String.format("User with Id %s not found in room with Id %s", userId, roomId));
-        }
-
-        return ResponseEntity.ok(room.removeUser(userId));
     }
 }

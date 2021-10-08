@@ -1,6 +1,6 @@
 package com.jack.applications.database.daos;
 
-import com.jack.applications.database.models.Genre;
+import com.jack.applications.webservice.models.Genre;
 import com.jack.applications.database.models.GenreWrapper;
 import com.jack.applications.database.resources.TMDBConstants;
 import com.jack.applications.database.resources.TMDBFilterKeys;

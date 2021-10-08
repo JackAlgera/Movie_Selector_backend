@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com</groupId>
-	<artifactId>jack.applications</artifactId>
+	<artifactId>movie-selector-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>jack.applications</name>
+	<name>movie-selector-backend</name>
 	<description>Spring web service that handles the Movie selector backend endpoints and overall room management.</description>
 
 	<properties>
@@ -29,6 +29,16 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
 
 		<dependency>

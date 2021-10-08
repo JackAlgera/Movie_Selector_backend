@@ -3,6 +3,7 @@ package com.jack.applications.utils;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.util.UUID;
 
 @Service
 public class IdGenerator {
@@ -20,6 +21,10 @@ public class IdGenerator {
         }
 
         return newId.toString();
+    }
+
+    public UUID getRandomUUID() {
+        return UUID.randomUUID();
     }
 
 }

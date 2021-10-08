@@ -1,5 +1,6 @@
 package com.jack.applications.database.models;
 
+import com.jack.applications.webservice.models.Genre;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
