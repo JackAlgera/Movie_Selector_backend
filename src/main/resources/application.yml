@@ -1,0 +1,28 @@
+app:
+  datasource:
+    main:
+      driver-class-name: org.postgresql.Driver
+      jdbc-url: jdbc:postgresql://movie_selector_database:5432/movie_selector_db
+      username: movie_selector_user
+      password: 'movie_selector_password'
+      pool-size: 30
+
+spring:
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  error:
+    include-binding-errors: always
+    include-message: always
+
+  servlet:
+    context-path: "/api"
+
+tmdb:
+  api-key: "096873bdfea4d97d0af6b7ab7faa38bb"
+  url: "https://api.themoviedb.org/3/"

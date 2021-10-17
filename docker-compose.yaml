@@ -1,0 +1,26 @@
+services:
+  movie_selector_backend:
+    container_name: movie_selector_backend
+#    image: jackalgera/video_selector_backend:latest
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - movie_selector_database
+
+  movie_selector_database:
+    container_name: movie_selector_database
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: movie_selector_user
+      POSTGRES_PASSWORD: movie_selector_password
+      POSTGRES_DB: movie_selector_db
+      PGDATA: /data/postgres
+    volumes:
+      - movie_selector_database:/var/lib/postgres
+    restart: unless-stopped
+
+volumes:
+  movie_selector_database:

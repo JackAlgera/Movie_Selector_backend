@@ -1,42 +1,40 @@
 package com.jack.applications.webservice.controllers;
 
-import com.jack.applications.database.daos.MovieDAOImpl;
+import com.jack.applications.webservice.tmdb.resources.TMDBFilter;
 import com.jack.applications.webservice.exceptions.GenreNotFoundException;
 import com.jack.applications.webservice.exceptions.MovieNotFoundException;
-import com.jack.applications.webservice.exceptions.RoomNotFoundException;
 import com.jack.applications.webservice.exceptions.UserNotFoundException;
 import com.jack.applications.webservice.exceptions.statuscodes.IncorrectRequestException;
-import com.jack.applications.webservice.handlers.MovieHandler;
-import com.jack.applications.webservice.handlers.UserHandler;
+import com.jack.applications.webservice.exceptions.statuscodes.NotFoundException;
 import com.jack.applications.webservice.models.Genre;
 import com.jack.applications.webservice.models.Movie;
-import com.jack.applications.database.resources.TMDBFilter;
-import com.jack.applications.webservice.handlers.GenreHandler;
-import com.jack.applications.webservice.handlers.RoomHandler;
-import com.jack.applications.webservice.models.Room;
 import com.jack.applications.webservice.models.User;
-import com.jack.applications.webservice.exceptions.statuscodes.NotFoundException;
+import com.jack.applications.webservice.services.GenreService;
+import com.jack.applications.webservice.services.MovieService;
+import com.jack.applications.webservice.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 public class MovieController {
 
     @Autowired
-    private MovieHandler movieHandler;
+    private MovieService movieService;
 
     @Autowired
-    private GenreHandler genreHandler;
+    private GenreService genreHandler;
 
     @Autowired
-    private UserHandler userHandler;
+    private UserService userService;
 
     /**
      * Endpoint to get list of all available genres from the platform.
@@ -62,7 +60,7 @@ public class MovieController {
     @GetMapping(path = "/movies/{movieId}")
     public ResponseEntity<Movie> getMovie(@PathVariable Integer movieId) {
         try {
-            Movie movie = movieHandler.getMovie(movieId);
+            Movie movie = movieService.getMovie(movieId);
             return new ResponseEntity<>(movie, HttpStatus.OK);
         } catch (MovieNotFoundException e) {
             throw new NotFoundException(e.getMessage());
@@ -79,8 +77,8 @@ public class MovieController {
     @PostMapping(path = "/users/{userId}/unrated-movies")
     public ResponseEntity<List<Movie>> getUnratedMoviesForUser(@PathVariable String userId, @RequestBody List<TMDBFilter> filters) {
         try {
-            User user = userHandler.findUserById(UUID.fromString(userId));
-            List<Movie> movies = movieHandler.getUnratedMoviesForUser(user, filters);
+            User user = userService.findUserById(UUID.fromString(userId));
+            List<Movie> movies = movieService.getUnratedMoviesForUser(user, filters);
             return new ResponseEntity<>(movies, HttpStatus.OK);
         } catch (UserNotFoundException | MovieNotFoundException e) {
             throw new NotFoundException(e.getMessage());
@@ -97,8 +95,8 @@ public class MovieController {
     @PostMapping(path = "/users/{userId}/other-users-unrated-movies")
     public ResponseEntity<List<Movie>> getOtherUsersUnratedMoviesForUser(@PathVariable String userId) {
         try {
-            User user = userHandler.findUserById(UUID.fromString(userId));
-            List<Movie> movies = movieHandler.getOtherUsersUnratedMoviesForUser(user);
+            User user = userService.findUserById(UUID.fromString(userId));
+            List<Movie> movies = movieService.getOtherUsersUnratedMoviesForUser(user);
             return new ResponseEntity<>(movies, HttpStatus.OK);
         } catch (UserNotFoundException | MovieNotFoundException e) {
             throw new NotFoundException(e.getMessage());

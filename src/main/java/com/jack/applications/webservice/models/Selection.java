@@ -1,32 +1,38 @@
 package com.jack.applications.webservice.models;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
+import lombok.Setter;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.UUID;
 
-@Data
 @Entity
-@NoArgsConstructor
+@Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @IdClass(SelectionId.class)
 public class Selection implements Serializable {
     @Id
-    @Column(updatable = false, nullable = false, length = 50)
     private String roomId;
     @Id
-    @Column(updatable = false, nullable = false, length = 50)
-    @Type(type = "uuid-char")
     private UUID userId;
     @Id
     private Integer movieId;
     private Integer rating;
+    private Instant createdOn = Instant.now();
+
+    public Selection(String roomId, UUID userId, Integer movieId, Integer rating) {
+        this.roomId = roomId;
+        this.userId = userId;
+        this.movieId = movieId;
+        this.rating = rating;
+        this.createdOn = Instant.now();
+    }
 }

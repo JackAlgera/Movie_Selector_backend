@@ -1,34 +1,30 @@
 package com.jack.applications.webservice.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
+import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.io.Serializable;
-import java.util.List;
+import java.time.Instant;
 
-@Data
-@Builder
 @Entity
-@NoArgsConstructor
+@Getter
+@Setter
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Movie implements Serializable {
     @Id
-    @Column(updatable = false, nullable = false)
     private Integer id;
     private String title;
-    @Type(type = "text")
     private String overview;
-    @JsonProperty("release_date")
     private String releaseDate;
-    @ManyToMany
-    private List<Genre> genres;
-    @JsonProperty("poster_path")
     private String posterPath;
+    private Instant lastModified = Instant.now();
 }

@@ -1,33 +1,33 @@
 package com.jack.applications.webservice.models;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
-import org.hibernate.type.UUIDCharType;
+import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.UUID;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@Table(name = "users")
 public class User implements Serializable {
     @Id
-    @Column(updatable = false, nullable = false, length = 50)
-    @Type(type = "uuid-char")
     private UUID userId;
     private String userName;
-    @ManyToOne
-    @JsonBackReference
-    private Room room;
+    private String roomId;
+    private Instant createdOn;
+    private Instant lastModified;
 
-    public String getRoomId() {
-        return room == null ? null : room.getRoomId();
+    public User() {
+        Instant now = Instant.now();
+        this.createdOn = now;
+        this.lastModified = now;
     }
 }
