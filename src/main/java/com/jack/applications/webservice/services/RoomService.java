@@ -8,11 +8,13 @@ import com.jack.applications.webservice.exceptions.RoomNotFoundException;
 import com.jack.applications.webservice.models.Room;
 import com.jack.applications.webservice.models.Selection;
 import com.jack.applications.webservice.models.User;
+import com.jack.applications.webservice.threads.RoomGarbageCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 public class RoomService {
 
     @JsonIgnore
-    private final static Long MAX_TIME_BEFORE_CLOSING_ROOM = 600_000L; // 600s = 10 mins
+    private final static Integer CLOSE_ROOM_AFTER_MINUTES = 10;
 
     @Autowired
     private RoomDAO roomDAO;
@@ -37,8 +39,8 @@ public class RoomService {
 
     @PostConstruct
     private void initialise() {
-//        RoomGarbageCollector garbageCollector = new RoomGarbageCollector(this);
-//        garbageCollector.start();
+        RoomGarbageCollector garbageCollector = new RoomGarbageCollector(this);
+        garbageCollector.start();
     }
 
     public Room generateNewRoom() {
@@ -105,11 +107,14 @@ public class RoomService {
     }
 
     public void removeUnusedRooms() {
-//        for (Room room : findAllRooms()) {
-//            if (room.shouldCloseRoom()) {
-//                System.out.printf("Removing room %s\n", room.getRoomId());
-//                roomRepo.deleteById(room.getRoomId());
-//            }
-//        }
+        for (Room room : findAllRooms()) {
+            if (shouldCloseRoom(room)) {
+                deleteRoom(room.getRoomId());
+            }
+        }
+    }
+
+    private boolean shouldCloseRoom(Room room) {
+        return Instant.now().isAfter(room.getLastModified().plus(CLOSE_ROOM_AFTER_MINUTES, ChronoUnit.MINUTES));
     }
 }

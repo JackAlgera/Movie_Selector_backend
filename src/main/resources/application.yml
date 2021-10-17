@@ -2,7 +2,7 @@ app:
   datasource:
     main:
       driver-class-name: org.postgresql.Driver
-      jdbc-url: jdbc:postgresql://movie_selector_database:5432/movie_selector_db
+      jdbc-url: jdbc:postgresql://localhost:5432/movie_selector_db
       username: movie_selector_user
       password: 'movie_selector_password'
       pool-size: 30
