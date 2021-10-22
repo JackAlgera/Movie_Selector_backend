@@ -1,8 +1,8 @@
 services:
   movie_selector_backend:
     container_name: movie_selector_backend
-#    image: jackalgera/video_selector_backend:latest
-    build: .
+    image: jackalgera/video_selector_backend:latest
+#    build: .
     ports:
       - "8080:8080"
     depends_on:

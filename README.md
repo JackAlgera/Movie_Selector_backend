@@ -17,3 +17,17 @@ To connect to local DB :
 
 List tables with :
 `\dt`
+
+Some extra help :
+
+If : 
+
+```
+failed to solve with frontend dockerfile.v0: failed to create LLB definition: circular dependency detected on stage: build
+```
+
+Then run :
+```
+export DOCKER_BUILDKIT=0
+export COMPOSE_DOCKER_CLI_BUILD=0
+```
