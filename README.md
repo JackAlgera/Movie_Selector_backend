@@ -1,9 +1,9 @@
 # Movie_Selector_backend
 Spring boot service that handles the backend API calls for the Movie Selector app.
 
-To start the service : `docker-compose up -d`
+To start the service : `docker-compose up -d --build`
 
-To stop the service and remove local data : `docker-compose down -v`
+To stop the service and remove local data : `docker-compose down -v --remove-orphans`
 
 Create new tagged image : `docker build -t jackalgera/video_selector_backend:latest .`
 
