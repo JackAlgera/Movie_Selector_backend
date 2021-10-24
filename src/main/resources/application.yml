@@ -14,12 +14,13 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
       ddl-auto: validate
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+  jackson:
+    property-naming-strategy: "LOWER_CAMEL_CASE"
 
 server:
   error:
     include-binding-errors: always
     include-message: always
-
   servlet:
     context-path: "/api"
 

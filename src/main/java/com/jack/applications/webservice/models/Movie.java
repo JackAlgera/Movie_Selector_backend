@@ -1,6 +1,9 @@
 package com.jack.applications.webservice.models;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,7 +27,9 @@ public class Movie implements Serializable {
     private Integer id;
     private String title;
     private String overview;
+    @JsonAlias({ "release_date" })
     private String releaseDate;
+    @JsonAlias({ "poster_path" })
     private String posterPath;
     private Instant lastModified = Instant.now();
 }
