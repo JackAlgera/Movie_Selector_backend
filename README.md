@@ -7,6 +7,8 @@ To stop the service and remove local data : `docker-compose down -v --remove-orp
 
 Create new tagged image : `docker build -t jackalgera/video_selector_backend:latest .`
 
+(Can also add `--platform linux/arm64`)
+
 Push image to Docker : `docker push jackalgera/video_selector_backend:latest`
 
 Delete dangling images : `docker image prune`
